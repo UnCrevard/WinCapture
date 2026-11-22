@@ -3,8 +3,8 @@ WINDRES  ?= windres
 TARGET   = WinCapture.exe
 
 OBJ_DIR  = obj
-SRCS     := $(wildcard C/*.c src/*.c *.c)
-RC_SRCS  := $(wildcard C/*.rc src/*.rc *.rc)
+SRCS     := $(wildcard C/*.c)
+RC_SRCS  := $(wildcard C/*.rc)
 OBJS     := $(patsubst %.c,$(OBJ_DIR)/%.o,$(notdir $(SRCS))) \
             $(patsubst %.rc,$(OBJ_DIR)/%.res.o,$(notdir $(RC_SRCS)))
 
