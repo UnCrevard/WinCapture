@@ -479,33 +479,6 @@ UINT64 sound_len100(int mode, const WCHAR *path)
     return (ms + 100) * 10000ULL;
 }
 
-static HICON make_icon(COLORREF c)
-{
-    HDC s = GetDC(NULL), d = CreateCompatibleDC(s);
-    HBITMAP col = CreateCompatibleBitmap(s, 16, 16), msk = CreateBitmap(16, 16, 1, 1, NULL);
-    HGDIOBJ old = SelectObject(d, col);
-    HBRUSH b = CreateSolidBrush(c);
-    ICONINFO ii; HICON ic;
-
-    PatBlt(d, 0, 0, 16, 16, BLACKNESS);
-    SelectObject(d, b);
-    SelectObject(d, GetStockObject(NULL_PEN));
-    Ellipse(d, 1, 1, 16, 16);
-
-    SelectObject(d, msk);
-    PatBlt(d, 0, 0, 16, 16, WHITENESS);
-    SelectObject(d, GetStockObject(BLACK_BRUSH));
-    SelectObject(d, GetStockObject(NULL_PEN));
-    Ellipse(d, 1, 1, 16, 16);
-
-    SelectObject(d, old);
-    ii.fIcon = TRUE; ii.xHotspot = ii.yHotspot = 0; ii.hbmMask = msk; ii.hbmColor = col;
-    ic = CreateIconIndirect(&ii);
-    DeleteObject(b); DeleteObject(col); DeleteObject(msk);
-    DeleteDC(d); ReleaseDC(NULL, s);
-    return ic;
-}
-
 HWND mk(HWND p, const WCHAR *cls, const WCHAR *txt, DWORD st, int x, int y, int w, int h, int id)
 {
     HWND c = CreateWindowExW(0, cls, txt, WS_CHILD | WS_VISIBLE | st, x, y, w, h,
@@ -546,8 +519,8 @@ int WINAPI wWinMain(HINSTANCE hi, HINSTANCE hprev, PWSTR cmd, int show)
         if (!(setCtx && setCtx((HANDLE)-4))) SetProcessDPIAware();
     }
     { HDC sdc = GetDC(NULL); g_dpi = GetDeviceCaps(sdc, LOGPIXELSX); ReleaseDC(NULL, sdc); }
-    icons_init();
     CoInitializeEx(NULL, COINIT_MULTITHREADED);
+    icons_init();
     MFStartup(MF_VERSION, MFSTARTUP_FULL);
     {
         INITCOMMONCONTROLSEX icc;
@@ -569,8 +542,12 @@ int WINAPI wWinMain(HINSTANCE hi, HINSTANCE hprev, PWSTR cmd, int show)
     ncm.cbSize = sizeof ncm;
     SystemParametersInfoW(SPI_GETNONCLIENTMETRICS, sizeof ncm, &ncm, 0);
     g_font = CreateFontIndirectW(&ncm.lfMessageFont);
-    g_icoIdle = make_icon(RGB(0, 120, 215));
-    g_icoRec = make_icon(RGB(220, 20, 20));
+    g_icoIdle = (HICON)LoadImageW(hi, MAKEINTRESOURCEW(IDI_APP_IDLE), IMAGE_ICON,
+                                  GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
+    if (!g_icoIdle) g_icoIdle = LoadIconW(NULL, IDI_APPLICATION);
+    g_icoRec = (HICON)LoadImageW(hi, MAKEINTRESOURCEW(IDI_APP_REC), IMAGE_ICON,
+                                 GetSystemMetrics(SM_CXSMICON), GetSystemMetrics(SM_CYSMICON), 0);
+    if (!g_icoRec) g_icoRec = g_icoIdle;
     g_wmTaskbar = RegisterWindowMessageW(L"TaskbarCreated");
 
     ZeroMemory(&wc, sizeof wc);
@@ -578,7 +555,8 @@ int WINAPI wWinMain(HINSTANCE hi, HINSTANCE hprev, PWSTR cmd, int show)
     wc.lpfnWndProc = MainProc;
     wc.hInstance = hi;
     wc.hCursor = LoadCursorW(NULL, IDC_ARROW);
-    wc.hIcon = g_icoIdle;
+    wc.hIcon = LoadIconW(hi, MAKEINTRESOURCEW(IDI_APP_IDLE));
+    if (!wc.hIcon) wc.hIcon = g_icoIdle;
     wc.lpszClassName = L"WinCapMain";
     RegisterClassExW(&wc);
 
@@ -614,7 +592,8 @@ int WINAPI wWinMain(HINSTANCE hi, HINSTANCE hprev, PWSTR cmd, int show)
 
     g_main = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED, L"WinCapMain", T(S_APP),
                              WS_POPUP | WS_CLIPCHILDREN, 100, 100, bar_width(), BAR_H, NULL, NULL, hi, NULL);
-    SendMessageW(g_main, WM_SETICON, ICON_BIG, (LPARAM)g_icoIdle);
+    SendMessageW(g_main, WM_SETICON, ICON_BIG, (LPARAM)wc.hIcon);
+    SendMessageW(g_main, WM_SETICON, ICON_SMALL, (LPARAM)g_icoIdle);
     g_frame = CreateWindowExW(WS_EX_TOPMOST | WS_EX_TOOLWINDOW | WS_EX_LAYERED | WS_EX_NOACTIVATE,
                               L"WinCapFrame", NULL, WS_POPUP | WS_THICKFRAME, 100, 140, 800, 500,
                               NULL, NULL, hi, NULL);

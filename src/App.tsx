@@ -33,6 +33,7 @@ export default function App() {
   const [files, setFiles] = useState<FileEntry[]>([]);
   const [activePath, setActivePath] = useState<string>('C/main.c');
   const [fileContent, setFileContent] = useState<string>('');
+  const [isImageFile, setIsImageFile] = useState<boolean>(false);
   const [loadingFile, setLoadingFile] = useState<boolean>(false);
   const [tab, setTab] = useState<'overview' | 'code'>('overview');
 
@@ -55,10 +56,14 @@ export default function App() {
     setLoadingFile(true);
     fetch(`/api/file?path=${encodeURIComponent(activePath)}`)
       .then((r) => r.json())
-      .then((data: { content?: string }) => {
+      .then((data: { content?: string; isImage?: boolean }) => {
+        setIsImageFile(Boolean(data.isImage));
         setFileContent(typeof data.content === 'string' ? data.content : '');
       })
-      .catch(() => setFileContent(''))
+      .catch(() => {
+        setIsImageFile(false);
+        setFileContent('');
+      })
       .finally(() => setLoadingFile(false));
   }, [activePath]);
 
@@ -197,12 +202,25 @@ export default function App() {
               <div className="px-4 py-2.5 border-b border-zinc-800 flex items-center justify-between">
                 <span className="text-xs font-mono text-zinc-200">{activePath}</span>
                 <span className="text-[11px] text-zinc-500">
-                  {loadingFile ? 'Loading…' : `${fileContent.split('\n').length} lines`}
+                  {loadingFile ? 'Loading…' : isImageFile ? 'Image asset' : `${fileContent.split('\n').length} lines`}
                 </span>
               </div>
-              <pre className="p-4 text-xs font-mono text-zinc-200 overflow-x-auto max-h-[70vh] leading-relaxed">
-                <code>{loadingFile ? 'Loading file…' : fileContent}</code>
-              </pre>
+              {isImageFile && !loadingFile ? (
+                <div className="p-8 flex flex-col items-center justify-center gap-4 bg-zinc-950/60">
+                  <div className="p-6 rounded-xl border border-zinc-800 bg-zinc-900/90 flex items-center justify-center">
+                    <img
+                      src={`/api/raw?path=${encodeURIComponent(activePath)}`}
+                      alt={activePath}
+                      className="w-24 h-24 object-contain"
+                    />
+                  </div>
+                  <p className="text-xs text-zinc-400 font-mono">{activePath}</p>
+                </div>
+              ) : (
+                <pre className="p-4 text-xs font-mono text-zinc-200 overflow-x-auto max-h-[70vh] leading-relaxed">
+                  <code>{loadingFile ? 'Loading file…' : fileContent}</code>
+                </pre>
+              )}
             </section>
           </div>
         )}

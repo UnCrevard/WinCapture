@@ -66,11 +66,26 @@ async function startServer() {
       return;
     }
     try {
+      const ext = path.extname(full).toLowerCase();
+      if (ext === '.png' || ext === '.ico' || ext === '.bmp' || ext === '.jpg') {
+        res.json({ path: rel, isImage: true, content: '' });
+        return;
+      }
       const content = fs.readFileSync(full, 'utf8');
-      res.json({ path: rel, content });
+      res.json({ path: rel, isImage: false, content });
     } catch (err) {
       res.status(500).json({ error: err instanceof Error ? err.message : 'Unable to read file' });
     }
+  });
+
+  app.get('/api/raw', (req, res) => {
+    const rel = typeof req.query.path === 'string' ? req.query.path : '';
+    const full = resolveAllowedFile(rel);
+    if (!full) {
+      res.status(404).send('File not found');
+      return;
+    }
+    res.sendFile(full);
   });
 
   const isProd = process.env.NODE_ENV === 'production';

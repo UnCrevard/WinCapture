@@ -37,7 +37,7 @@ $(TARGET): $(OBJS)
 $(OBJ_DIR)/%.o: %.c $(wildcard C/wincapture.h src/wincapture.h) | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OBJ_DIR)/%.res.o: %.rc | $(OBJ_DIR)
+$(OBJ_DIR)/%.res.o: %.rc $(wildcard C/resource.h C/app.manifest C/*.ico C/*.png) | $(OBJ_DIR)
 	$(WINDRES) -I C -I src -I . -O coff $< -o $@
 
 $(OBJ_DIR):

@@ -37,6 +37,7 @@
 #include <shobjidl.h>
 #include <commctrl.h>
 #include <uiautomation.h>
+#include "resource.h"
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
