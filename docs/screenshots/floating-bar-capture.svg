@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, sans-serif">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="55%" stop-color="#172554"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.55"/>
+    </filter>
+  </defs>
+
+  <!-- Windows 11 Desktop Wallpaper -->
+  <rect width="1280" height="720" fill="url(#wall)"/>
+  <circle cx="980" cy="180" r="280" fill="#2563eb" opacity="0.14"/>
+  <circle cx="280" cy="520" r="260" fill="#0ea5e9" opacity="0.10"/>
+
+  <!-- Background App Window (Code Editor + Terminal) -->
+  <g filter="url(#shadow)">
+    <rect x="130" y="75" width="1020" height="555" rx="10" fill="#18181b" stroke="#3f3f46" stroke-width="1"/>
+    <!-- Title bar -->
+    <path d="M130 85 a10 10 0 0 1 10 -10 h1000 a10 10 0 0 1 10 10 v28 h-1020 z" fill="#202024"/>
+    <text x="152" y="99" fill="#d4d4d8" font-size="12" font-weight="600">WinCapture — C/capture.c</text>
+    <circle cx="1115" cy="94" r="5" fill="#52525b"/>
+    <circle cx="1132" cy="94" r="5" fill="#ef4444" opacity="0.8"/>
+
+    <!-- Sidebar -->
+    <rect x="131" y="113" width="175" height="516" fill="#141417"/>
+    <text x="148" y="138" fill="#71717a" font-size="11" font-weight="700" letter-spacing="0.8">EXPLORER</text>
+    <text x="152" y="164" fill="#e4e4e7" font-size="12">▾ C/</text>
+    <text x="168" y="186" fill="#60a5fa" font-size="12">capture.c</text>
+    <text x="168" y="206" fill="#a1a1aa" font-size="12">encoder.c</text>
+    <text x="168" y="226" fill="#a1a1aa" font-size="12">main.c</text>
+    <text x="168" y="246" fill="#a1a1aa" font-size="12">theme.c</text>
+    <text x="168" y="266" fill="#a1a1aa" font-size="12">ui.c</text>
+    <text x="168" y="286" fill="#a1a1aa" font-size="12">wincapture.h</text>
+    <text x="152" y="310" fill="#a1a1aa" font-size="12">Makefile</text>
+
+    <!-- Code Editor Content -->
+    <g font-family="Cascadia Code, Consolas, monospace" font-size="12.5">
+      <text x="328" y="146" fill="#6b7280">/* GPU Desktop Duplication -&gt; D3D11 NV12 */</text>
+      <text x="328" y="170" fill="#c084fc">BOOL</text><text x="366" y="170" fill="#93c5fd"> gpu_init</text><text x="434" y="170" fill="#e4e4e7">(int *pw, int *ph, int fps) {</text>
+      <text x="348" y="194" fill="#93c5fd">IDXGIOutput1_DuplicateOutput</text><text x="562" y="194" fill="#e4e4e7">(g-&gt;out1, dev, &amp;g-&gt;dupl);</text>
+      <text x="348" y="218" fill="#93c5fd">MFCreateDXGIDeviceManager</text><text x="536" y="218" fill="#e4e4e7">(&amp;g-&gt;mgrToken, &amp;g-&gt;mgr);</text>
+      <text x="348" y="242" fill="#c084fc">return</text><text x="400" y="242" fill="#34d399"> TRUE</text><text x="438" y="242" fill="#e4e4e7">;</text>
+      <text x="328" y="266" fill="#e4e4e7">}</text>
+
+      <!-- Terminal split -->
+      <rect x="306" y="425" width="843" height="204" fill="#111114"/>
+      <line x1="306" y1="425" x2="1149" y2="425" stroke="#27272a" stroke-width="1"/>
+      <text x="328" y="450" fill="#a1a1aa" font-size="11.5">C:\WinCapture&gt; make</text>
+      <text x="328" y="472" fill="#71717a" font-size="11.5">gcc -O2 -Wall -Wextra -IC -c C/capture.c -o obj/capture.o</text>
+      <text x="328" y="492" fill="#71717a" font-size="11.5">gcc -O2 -Wall -Wextra -IC -c C/encoder.c -o obj/encoder.o</text>
+      <text x="328" y="512" fill="#71717a" font-size="11.5">windres -I C -O coff C/app.rc -o obj/app.res.o</text>
+      <text x="328" y="534" fill="#34d399" font-size="11.5">Built WinCapture.exe cleanly.</text>
+    </g>
+  </g>
+
+  <!-- WinCapture Hollow Capture Frame (960 x 540 @ 160, 108) -->
+  <!-- Top drag handle 10px, Left/Right/Bottom borders 5px, #2D2D30 -->
+  <path fill="#2d2d30" fill-rule="evenodd" d="M155,98 H1125 V653 H155 Z M160,108 V648 H1120 V108 Z"/>
+  <rect x="155" y="98" width="970" height="555" fill="none" stroke="#4b4b52" stroke-width="1"/>
+
+  <!-- WinCapture Floating Toolbar (Expanded on hover) -->
+  <g filter="url(#shadow)" transform="translate(405, 62)">
+    <rect width="470" height="30" rx="3" fill="#2d2d30" stroke="#4b4b52" stroke-width="1"/>
+
+    <!-- Button 1: Shutter (Screenshot) -->
+    <rect x="10" y="4" width="30" height="22" rx="2" fill="#444449"/>
+    <circle cx="25" cy="15" r="6" fill="none" stroke="#f4f4f5" stroke-width="1.6"/>
+    <circle cx="25" cy="15" r="2.2" fill="#f4f4f5"/>
+
+    <!-- Button 2: Record -->
+    <rect x="44" y="4" width="30" height="22" rx="2" fill="#444449"/>
+    <circle cx="59" cy="15" r="5.5" fill="#e12828"/>
+
+    <!-- Button 3: Size Presets -->
+    <rect x="78" y="4" width="30" height="22" rx="2" fill="#444449"/>
+    <path d="M87,12 V9 H90 M96,9 H99 V12 M99,18 V21 H96 M90,21 H87 V18" fill="none" stroke="#f4f4f5" stroke-width="1.6"/>
+
+    <!-- Button 4: Target Window -->
+    <rect x="112" y="4" width="30" height="22" rx="2" fill="#444449"/>
+    <circle cx="127" cy="15" r="6" fill="none" stroke="#f4f4f5" stroke-width="1.4"/>
+    <line x1="127" y1="7" x2="127" y2="11" stroke="#f4f4f5" stroke-width="1.4"/>
+    <line x1="127" y1="19" x2="127" y2="23" stroke="#f4f4f5" stroke-width="1.4"/>
+    <line x1="119" y1="15" x2="123" y2="15" stroke="#f4f4f5" stroke-width="1.4"/>
+    <line x1="131" y1="15" x2="135" y2="15" stroke="#f4f4f5" stroke-width="1.4"/>
+    <circle cx="127" cy="15" r="2" fill="#eb3c28"/>
+
+    <!-- Button 5: Settings Gear -->
+    <rect x="146" y="4" width="30" height="22" rx="2" fill="#444449"/>
+    <circle cx="161" cy="15" r="4.5" fill="none" stroke="#f4f4f5" stroke-width="1.8" stroke-dasharray="2.5 1.8"/>
+    <circle cx="161" cy="15" r="1.8" fill="#f4f4f5"/>
+
+    <!-- Button 6: Toggle Frame -->
+    <rect x="184" y="4" width="30" height="22" rx="2" fill="#444449"/>
+    <rect x="192" y="10" width="14" height="10" fill="none" stroke="#f4f4f5" stroke-width="1.6"/>
+
+    <!-- Button 7: Minimize to Tray -->
+    <rect x="218" y="4" width="30" height="22" rx="2" fill="#444449"/>
+    <path d="M227,16 V19 H239 V16 M233,10 V16 M230,13.5 L233,16.5 L236,13.5" fill="none" stroke="#f4f4f5" stroke-width="1.5"/>
+
+    <!-- Status Readout -->
+    <text x="260" y="19.5" fill="#f0f0f0" font-size="12.5" font-weight="500">960 × 540  @ 160, 108</text>
+  </g>
+
+  <!-- Windows 11 Taskbar -->
+  <rect x="0" y="676" width="1280" height="44" fill="#18181b" fill-opacity="0.92"/>
+  <line x1="0" y1="676" x2="1280" y2="676" stroke="#27272a" stroke-width="1"/>
+  <!-- Start + Taskbar icons -->
+  <g transform="translate(565, 686)">
+    <rect x="0" y="2" width="10" height="10" rx="1" fill="#38bdf8"/>
+    <rect x="12" y="2" width="10" height="10" rx="1" fill="#38bdf8"/>
+    <rect x="0" y="14" width="10" height="10" rx="1" fill="#0284c7"/>
+    <rect x="12" y="14" width="10" height="10" rx="1" fill="#0284c7"/>
+    <rect x="44" y="2" width="22" height="22" rx="4" fill="#27272a"/>
+    <rect x="78" y="2" width="22" height="22" rx="4" fill="#27272a"/>
+    <rect x="112" y="2" width="22" height="22" rx="4" fill="#27272a"/>
+  </g>
+  <!-- System tray + WinCapture blue dot -->
+  <circle cx="1174" cy="698" r="6" fill="#0078d7"/>
+  <text x="1202" y="702" fill="#e4e4e7" font-size="11.5">16:30</text>
+</svg>

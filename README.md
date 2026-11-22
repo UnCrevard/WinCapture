@@ -9,22 +9,22 @@ A lightweight, dependency-free **Win32 screen & audio capture tool** written in 
 ### 1. Floating Toolbar & Hollow Capture Frame
 The compact floating bar collapses to Screenshot & Record buttons when idle and expands on hover to show size presets, window targeting, settings, frame toggle, tray minimize, and live region dimensions (`W × H @ X, Y`).
 
-![WinCapture floating toolbar and capture frame](docs/screenshots/floating-bar-capture.jpg)
+![WinCapture floating toolbar and capture frame](docs/screenshots/floating-bar-capture.svg)
 
 ### 2. Window / UI Element Targeting & 4× Pixel Magnifier
 Powered by Win32 + UI Automation, the targeter highlights windows and inner UI panels as you move the cursor. Scroll the mouse wheel to step through nesting levels, click to snap the frame, or click-and-drag a custom area—assisted by a real-time **4× pixel loupe** with crosshair coordinates and RGB readout.
 
-![WinCapture window targeting and 4x magnifier](docs/screenshots/window-targeting-magnifier.jpg)
+![WinCapture window targeting and 4x magnifier](docs/screenshots/window-targeting-magnifier.svg)
 
 ### 3. Active Video Recording & Click Highlights
 During recording, the frame and bar turn crimson (amber when paused) with a live elapsed timer, Pause/Resume button, and optional circular click-highlight rings rendered directly into the video.
 
-![WinCapture active recording with click highlights](docs/screenshots/recording-and-clicks.jpg)
+![WinCapture active recording with click highlights](docs/screenshots/recording-and-clicks.svg)
 
 ### 4. Settings (Windows Dark / Light Theme)
 The settings window automatically follows your Windows `AppsUseLightTheme` preference in real time, including dark title bars and dark-mode controls.
 
-![WinCapture dark-mode settings dialog](docs/screenshots/settings-dark-mode.jpg)
+![WinCapture dark-mode settings dialog](docs/screenshots/settings-dark-mode.svg)
 
 ---
 

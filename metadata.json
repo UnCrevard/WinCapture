@@ -1,0 +1,5 @@
+{
+  "name": "WinCapture",
+  "description": "Win32 C screen & audio capture tool with DXGI/Direct3D 11 acceleration, Media Foundation encoding, WASAPI audio, UI Automation targeting, and source explorer.",
+  "requestFramePermissions": []
+}

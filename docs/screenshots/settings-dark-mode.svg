@@ -1,0 +1,159 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, sans-serif">
+  <defs>
+    <linearGradient id="bg4" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0e17"/>
+      <stop offset="100%" stop-color="#171e2e"/>
+    </linearGradient>
+    <filter id="sh4" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#000" flood-opacity="0.7"/>
+    </filter>
+  </defs>
+
+  <!-- Dimmed Windows 11 Dark Desktop -->
+  <rect width="1280" height="720" fill="url(#bg4)"/>
+
+  <!-- Settings Window (880 x 514, Dark Mode #202020) -->
+  <g filter="url(#sh4)" transform="translate(200, 88)">
+    <rect width="880" height="538" rx="8" fill="#202020" stroke="#444444" stroke-width="1"/>
+    <!-- Dark Titlebar -->
+    <path d="M0 8 a8 8 0 0 1 8 -8 h864 a8 8 0 0 1 8 8 v24 h-880 z" fill="#181818"/>
+    <text x="14" y="21" fill="#f0f0f0" font-size="12" font-weight="600">Settings</text>
+
+    <g transform="translate(0, 28)" font-size="11.5">
+      <!-- COLUMN 1 -->
+      <g fill="#f0f0f0">
+        <text x="16" y="28">Video codec</text>
+        <text x="16" y="58">Video bitrate</text>
+        <text x="16" y="88">Frames per second</text>
+        <text x="36" y="118">Record system audio</text>
+        <text x="16" y="148">Audio bitrate (AAC)</text>
+        <text x="36" y="178">Also record microphone</text>
+        <text x="16" y="208">Image format</text>
+        <text x="16" y="238">JPEG quality</text>
+        <text x="16" y="268">Image sound</text>
+        <text x="16" y="298">Video sound</text>
+        <text x="36" y="328">Capture the mouse cursor</text>
+        <text x="36" y="352">Highlight mouse clicks in video</text>
+        <text x="36" y="376">Variable frame rate (skip duplicates)</text>
+        <text x="16" y="408">Folder</text>
+        <text x="82" y="408" fill="#cccccc">C:\Users\Alex\Pictures\Captures</text>
+        <text x="16" y="440">Image shortcut</text>
+        <text x="16" y="468">Video shortcut</text>
+        <text x="16" y="496">Pause shortcut</text>
+      </g>
+
+      <!-- Column 1 Checkboxes -->
+      <g stroke="#888888" fill="#0078d7">
+        <rect x="16" y="107" width="14" height="14" rx="2"/>
+        <rect x="16" y="167" width="14" height="14" rx="2"/>
+        <rect x="16" y="317" width="14" height="14" rx="2"/>
+        <rect x="16" y="341" width="14" height="14" rx="2" fill="#333333"/>
+        <rect x="16" y="365" width="14" height="14" rx="2"/>
+      </g>
+      <g fill="none" stroke="#ffffff" stroke-width="1.6">
+        <polyline points="19,114 22,117 27,110"/>
+        <polyline points="19,174 22,177 27,170"/>
+        <polyline points="19,324 22,327 27,320"/>
+        <polyline points="19,372 22,375 27,368"/>
+      </g>
+
+      <!-- Column 1 Dark Dropdowns & Inputs (#333333) -->
+      <g fill="#333333" stroke="#585858">
+        <rect x="150" y="12" width="130" height="22" rx="2"/>
+        <rect x="150" y="42" width="130" height="22" rx="2"/>
+        <rect x="150" y="72" width="130" height="22" rx="2"/>
+        <rect x="150" y="132" width="130" height="22" rx="2"/>
+        <rect x="150" y="192" width="130" height="22" rx="2"/>
+        <rect x="150" y="222" width="130" height="22" rx="2"/>
+        <rect x="150" y="252" width="130" height="22" rx="2"/>
+        <rect x="150" y="282" width="130" height="22" rx="2"/>
+        <rect x="246" y="392" width="34" height="22" rx="2"/>
+        <rect x="150" y="424" width="130" height="22" rx="2"/>
+        <rect x="150" y="452" width="130" height="22" rx="2"/>
+        <rect x="150" y="480" width="130" height="22" rx="2"/>
+      </g>
+      <g fill="#f0f0f0">
+        <text x="158" y="27">H.264 (AVC)</text>
+        <text x="158" y="57">8 Mb/s</text>
+        <text x="158" y="87">30</text>
+        <text x="158" y="147">160 kb/s</text>
+        <text x="158" y="207">PNG</text>
+        <text x="158" y="237">95 %</text>
+        <text x="158" y="267">Camera shutter</text>
+        <text x="158" y="297">Windows default</text>
+        <text x="258" y="407">…</text>
+        <text x="158" y="439">Ctrl+Shift+S</text>
+        <text x="158" y="467">Ctrl+Shift+R</text>
+        <text x="158" y="495">Ctrl+Shift+P</text>
+      </g>
+
+      <!-- COLUMN 2 -->
+      <g fill="#f0f0f0">
+        <text x="306" y="28">Frame color</text>
+        <text x="306" y="58">Title bar color</text>
+        <text x="306" y="92">Interface transparency: 0 %</text>
+        <text x="306" y="148">File name (without extension)</text>
+        <text x="306" y="196" fill="#a0a0a0" font-size="10.5">Variables: %Y %m %d %H %M %S, %f (ms),</text>
+        <text x="306" y="212" fill="#a0a0a0" font-size="10.5">%t (window title), %p (program)</text>
+        <text x="326" y="276">Copy screenshot to clipboard</text>
+        <text x="326" y="300">Exclude interface from captures</text>
+        <text x="306" y="336">Language</text>
+        <text x="326" y="368">GPU capture (DirectX)</text>
+        <text x="306" y="392" fill="#a0a0a0" font-size="10.5">Lowers CPU usage. Falls back automatically.</text>
+        <text x="306" y="454">Image timer</text>
+      </g>
+
+      <!-- Color Swatches & Trackbar -->
+      <rect x="444" y="12" width="130" height="24" fill="#2d2d30" stroke="#777"/>
+      <text x="488" y="28" fill="#f0f0f0">Choose…</text>
+      <rect x="444" y="42" width="130" height="24" fill="#2d2d30" stroke="#777"/>
+      <text x="488" y="58" fill="#f0f0f0">Choose…</text>
+      <rect x="306" y="109" width="268" height="4" rx="2" fill="#444"/>
+      <rect x="306" y="103" width="10" height="16" rx="2" fill="#0078d7"/>
+
+      <!-- File name edit box -->
+      <rect x="306" y="156" width="268" height="22" rx="2" fill="#333333" stroke="#0078d7"/>
+      <text x="313" y="171" fill="#f0f0f0">capture_%Y%m%d_%H%M%S</text>
+
+      <!-- Checkboxes col 2 -->
+      <rect x="306" y="265" width="14" height="14" rx="2" fill="#0078d7" stroke="#888"/>
+      <polyline points="309,272 312,275 317,268" fill="none" stroke="#fff" stroke-width="1.6"/>
+      <rect x="306" y="289" width="14" height="14" rx="2" fill="#0078d7" stroke="#888"/>
+      <polyline points="309,296 312,299 317,292" fill="none" stroke="#fff" stroke-width="1.6"/>
+      <rect x="306" y="357" width="14" height="14" rx="2" fill="#0078d7" stroke="#888"/>
+      <polyline points="309,364 312,367 317,360" fill="none" stroke="#fff" stroke-width="1.6"/>
+
+      <rect x="444" y="320" width="130" height="22" rx="2" fill="#333333" stroke="#585858"/>
+      <text x="452" y="335" fill="#f0f0f0">English</text>
+      <rect x="444" y="438" width="130" height="22" rx="2" fill="#333333" stroke="#585858"/>
+      <text x="452" y="453" fill="#f0f0f0">None</text>
+
+      <!-- COLUMN 3 -->
+      <g fill="#f0f0f0">
+        <text x="598" y="28">Rate control</text>
+        <text x="598" y="64">QP I frames (0–51)</text>
+        <text x="598" y="94">QP P frames (0–51)</text>
+        <text x="598" y="124">QP B frames (0–51)</text>
+        <text x="598" y="162" fill="#a0a0a0" font-size="10.5">Lower QP = better quality &amp; larger files.</text>
+        <text x="598" y="178" fill="#a0a0a0" font-size="10.5">0–10: near lossless · 15–20: very high</text>
+        <text x="598" y="194" fill="#a0a0a0" font-size="10.5">21–26: good · 27+: visibly lossy.</text>
+        <text x="598" y="308">Full screen shortcut</text>
+      </g>
+      <rect x="736" y="12" width="130" height="22" rx="2" fill="#333333" stroke="#585858"/>
+      <text x="744" y="27" fill="#f0f0f0">Target bitrate</text>
+
+      <g fill="#333333" stroke="#585858">
+        <rect x="736" y="48" width="90" height="22" rx="2"/>
+        <rect x="736" y="78" width="90" height="22" rx="2"/>
+        <rect x="736" y="108" width="90" height="22" rx="2"/>
+        <rect x="736" y="292" width="130" height="22" rx="2"/>
+      </g>
+      <g fill="#919191">
+        <text x="744" y="63">18</text>
+        <text x="744" y="93">20</text>
+        <text x="744" y="123">22</text>
+      </g>
+      <text x="744" y="307" fill="#f0f0f0">Ctrl+Shift+F</text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 720" width="1280" height="720" font-family="Segoe UI, -apple-system, BlinkMacSystemFont, sans-serif">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#111827"/>
+      <stop offset="100%" stop-color="#090d16"/>
+    </linearGradient>
+    <filter id="sh3" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000" flood-opacity="0.6"/>
+    </filter>
+  </defs>
+
+  <rect width="1280" height="720" fill="url(#bg3)"/>
+
+  <!-- Captured Application Window -->
+  <g filter="url(#sh3)">
+    <rect x="160" y="106" width="960" height="540" rx="8" fill="#18181b" stroke="#3f3f46"/>
+    <path d="M160 114 a8 8 0 0 1 8 -8 h944 a8 8 0 0 1 8 8 v30 h-960 z" fill="#202024"/>
+    <text x="182" y="128" fill="#e4e4e7" font-size="12" font-weight="600">Demo Project — Recording Session</text>
+
+    <!-- Dashboard Cards inside captured region -->
+    <rect x="195" y="170" width="270" height="145" rx="8" fill="#202026" stroke="#2e2e36"/>
+    <text x="216" y="198" fill="#a1a1aa" font-size="12">Capture Pipeline</text>
+    <text x="216" y="232" fill="#f4f4f5" font-size="22" font-weight="700">DXGI + D3D11</text>
+    <text x="216" y="262" fill="#34d399" font-size="12">60 FPS · H.264 Hardware</text>
+
+    <rect x="490" y="170" width="270" height="145" rx="8" fill="#202026" stroke="#2e2e36"/>
+    <text x="511" y="198" fill="#a1a1aa" font-size="12">Audio Mix</text>
+    <text x="511" y="232" fill="#f4f4f5" font-size="22" font-weight="700">Loopback + Mic</text>
+    <text x="511" y="262" fill="#60a5fa" font-size="12">48 kHz AAC · 160 kb/s</text>
+
+    <rect x="785" y="170" width="295" height="145" rx="8" fill="#202026" stroke="#2e2e36"/>
+    <text x="806" y="198" fill="#a1a1aa" font-size="12">Output File</text>
+    <text x="806" y="232" fill="#f4f4f5" font-size="18" font-weight="600">capture_20261122.mp4</text>
+    <text x="806" y="262" fill="#a1a1aa" font-size="12">1280 × 720</text>
+
+    <!-- Interactive Button Being Clicked -->
+    <rect x="480" y="405" width="190" height="44" rx="8" fill="#2563eb"/>
+    <text x="530" y="432" fill="#ffffff" font-size="14" font-weight="600">Export Video</text>
+
+    <!-- Click-Highlight Halo Ring (#00A5FF) -->
+    <circle cx="575" cy="427" r="22" fill="none" stroke="#00a5ff" stroke-width="2.5" opacity="0.9"/>
+    <circle cx="575" cy="427" r="32" fill="none" stroke="#00a5ff" stroke-width="1.5" opacity="0.4"/>
+    <!-- Mouse Cursor -->
+    <polygon points="575,427 575,445 580,440 584,448 587,446 583,438 589,438" fill="#ffffff" stroke="#000000" stroke-width="1"/>
+  </g>
+
+  <!-- Crimson Recording Frame (#C81E1E) -->
+  <path fill="#c81e1e" fill-rule="evenodd" d="M155,96 H1125 V651 H155 Z M160,106 V646 H1120 V106 Z"/>
+
+  <!-- WinCapture Floating Toolbar in Recording State (#C81E1E) -->
+  <g filter="url(#sh3)" transform="translate(380, 60)">
+    <rect width="520" height="30" rx="3" fill="#c81e1e" stroke="#e53e3e" stroke-width="1"/>
+
+    <!-- Button 1: Shutter -->
+    <rect x="10" y="4" width="30" height="22" rx="2" fill="#dc3535"/>
+    <circle cx="25" cy="15" r="5.5" fill="none" stroke="#fff" stroke-width="1.5"/>
+
+    <!-- Button 2: Stop (white background, red square) -->
+    <rect x="44" y="4" width="30" height="22" rx="2" fill="#ffffff"/>
+    <rect x="53" y="9" width="12" height="12" fill="#e12828"/>
+
+    <!-- Button 3: Pause (||) -->
+    <rect x="78" y="4" width="30" height="22" rx="2" fill="#dc3535"/>
+    <rect x="88" y="9" width="3.5" height="12" fill="#ffffff"/>
+    <rect x="94.5" y="9" width="3.5" height="12" fill="#ffffff"/>
+
+    <!-- Remaining buttons -->
+    <rect x="112" y="4" width="30" height="22" rx="2" fill="#dc3535"/>
+    <path d="M121,12 V9 H124 M130,9 H133 V12 M133,18 V21 H130 M124,21 H121 V18" fill="none" stroke="#fff" stroke-width="1.5"/>
+
+    <rect x="146" y="4" width="30" height="22" rx="2" fill="#dc3535"/>
+    <circle cx="161" cy="15" r="5.5" fill="none" stroke="#fff" stroke-width="1.5"/>
+
+    <rect x="180" y="4" width="30" height="22" rx="2" fill="#dc3535"/>
+    <circle cx="195" cy="15" r="4.5" fill="none" stroke="#fff" stroke-width="1.6" stroke-dasharray="2.5 1.8"/>
+
+    <rect x="218" y="4" width="30" height="22" rx="2" fill="#dc3535"/>
+    <rect x="226" y="10" width="14" height="10" fill="none" stroke="#fff" stroke-width="1.5"/>
+
+    <rect x="252" y="4" width="30" height="22" rx="2" fill="#dc3535"/>
+    <path d="M261,16 V19 H273 V16 M267,10 V16" fill="none" stroke="#fff" stroke-width="1.5"/>
+
+    <text x="294" y="19.5" fill="#ffffff" font-size="12.5" font-weight="600">● 00:42  960 × 540  @ 160, 106</text>
+  </g>
+
+  <!-- Taskbar with red WinCapture tray icon -->
+  <rect x="0" y="676" width="1280" height="44" fill="#18181b" fill-opacity="0.92"/>
+  <circle cx="1174" cy="698" r="6" fill="#dc1414"/>
+  <text x="1202" y="702" fill="#e4e4e7" font-size="11.5">16:32</text>
+</svg>
