@@ -1,7 +1,9 @@
-/*
-
-!/C
-!/Makefile
-!/.gitignore
-!/docs
-!/README.md
+/.aistudio
+/server/
+/src/
+/workspaces/
+/.env.*
+/bun.lock
+/index.html
+/*.json
+/*.ts
