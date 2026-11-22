@@ -2,7 +2,7 @@
 /server/
 /src/
 /workspaces/
-/.env.*
+/.env.example
 /bun.lock
 /index.html
 /*.json
