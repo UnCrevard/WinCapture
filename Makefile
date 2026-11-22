@@ -22,26 +22,10 @@ LDLIBS   = -lmfplat -lmfreadwrite -lmfuuid -lwindowscodecs \
            -lgdi32 -luser32 -lwinmm -ldwmapi -lcomdlg32 \
            -lcomctl32 -ldxgi -ld3d11
 
-IS_WIN_CMD :=
-ifeq ($(OS),Windows_NT)
-  ifneq (,$(findstring cmd,$(SHELL))$(findstring CMD,$(SHELL)))
-    IS_WIN_CMD := 1
-  else ifeq ($(strip $(shell echo %OS%)),Windows_NT)
-    IS_WIN_CMD := 1
-  endif
-endif
-
-ifdef IS_WIN_CMD
-  MKDIR_OBJ = if not exist "$(OBJ_DIR)" mkdir "$(OBJ_DIR)"
-  RM_OBJ    = if exist "$(OBJ_DIR)" rmdir /s /q "$(OBJ_DIR)"
-  RM_BIN    = if exist "$(TARGET)" del /f /q "$(TARGET)"
-  RUN_CMD   = $(TARGET)
-else
-  MKDIR_OBJ = mkdir -p $(OBJ_DIR)
-  RM_OBJ    = rm -rf $(OBJ_DIR)
-  RM_BIN    = rm -f $(TARGET)
-  RUN_CMD   = ./$(TARGET)
-endif
+MKDIR_OBJ = if not exist "$(OBJ_DIR)" mkdir "$(OBJ_DIR)"
+RM_OBJ    = if exist "$(OBJ_DIR)" rmdir /s /q "$(OBJ_DIR)"
+RM_BIN    = if exist "$(TARGET)" del /f /q "$(TARGET)"
+RUN_CMD   = $(TARGET)
 
 .PHONY: all clean fclean re run
 
