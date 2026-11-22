@@ -183,11 +183,18 @@ static void known_dir(REFKNOWNFOLDERID id, WCHAR *out)
 
 void dir_resolve(WCHAR *dir)
 {
+    WCHAR exeDir[MAX_PATH];
+    GetModuleFileNameW(NULL, exeDir, MAX_PATH);
+    PathRemoveFileSpecW(exeDir);
+
     if (g_outDir[0]) {
-        wcsncpy_s(dir, MAX_PATH, g_outDir, _TRUNCATE);
+        if (PathIsRelativeW(g_outDir)) {
+            PathCombineW(dir, exeDir, g_outDir);
+        } else {
+            wcsncpy_s(dir, MAX_PATH, g_outDir, _TRUNCATE);
+        }
     } else {
-        known_dir(&MY_FOLDERID_Pictures, dir);
-        PathAppendW(dir, L"Captures");
+        wcsncpy_s(dir, MAX_PATH, exeDir, _TRUNCATE);
     }
 }
 

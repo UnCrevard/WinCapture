@@ -1,12 +1,5 @@
-node_modules/
-dist/
-obj/
-*.o
-*.exe
-.env
-.env.local
-.DS_Store
-/.aistudio/
-
+.vscode
 /backup
 *.ini
+*.exe
+/obj

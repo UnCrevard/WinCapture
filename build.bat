@@ -1,12 +1,32 @@
 @echo off
-setlocal
+setlocal EnableDelayedExpansion
 
 set "p=WinCapture.exe"
+set "backup_dir=backup"
 
-taskkill /f /im %p%
+if not exist "%backup_dir%" mkdir "%backup_dir%"
 
-ren "%p%" "backup_%date%.exe"
+taskkill /f /im %p% >nul 2>&1
 
-gcc -O2 -s -municode -mwindows -o build\%p% src\main.c -lmfplat -lmfreadwrite -lmfuuid -lwindowscodecs -lole32 -loleaut32 -luuid -lshlwapi -lshell32 -lgdi32 -luser32 -lwinmm -ldwmapi -lcomdlg32 -lcomctl32 -ldxgi -ld3d11
+mingw32-make.exe
+if %ERRORLEVEL% neq 0 (
+    echo [BUILD ERROR] La compilation a echoue.
+    exit /b %ERRORLEVEL%
+)
 
-start build\%p%
+:: Horodatage format YYYY-MM-DD_HH-mm-ss
+set "d=%date: =%"
+set "t=%time: =0%"
+set "t=%t::=-%"
+set "t=%t:,=.%"
+set "t=%t:~0,8%"
+set "backup_file=%backup_dir%\WinCapture_%d%_%t%.exe"
+
+copy /y "%p%" "%backup_file%" >nul
+if %ERRORLEVEL% equ 0 (
+    echo [BACKUP] Copie creee : %backup_file%
+) else (
+    echo [WARNING] Impossible de copier %p% vers %backup_file%
+)
+
+start "" "%p%"

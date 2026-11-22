@@ -213,7 +213,6 @@ void take_screenshot(void)
     } else {
         wcsncpy_s(g_lastFile, ARRAYSIZE(g_lastFile), path, _TRUNCATE);
         wcsncpy_s(g_lastShot, ARRAYSIZE(g_lastShot), path, _TRUNCATE);
-        if (g_uiHidden || g_full) balloon(T(S_SAVED_T), PathFindFileNameW(path));
     }
 }
 

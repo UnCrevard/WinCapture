@@ -503,7 +503,6 @@ void rec_stop(void)
     CloseHandle(rc.stopEv);
     g_rec = FALSE;
     wcsncpy_s(g_lastFile, ARRAYSIZE(g_lastFile), g_recPath, _TRUNCATE);
-    if (g_uiHidden || g_full) balloon(T(S_SAVED_T), PathFindFileNameW(g_recPath));
     ui_update();
 }
 
