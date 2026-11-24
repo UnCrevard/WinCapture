@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WinCapture — Lightweight Win32 Screen &amp; Audio Capture</title>
+  <meta name="description" content="A lightweight, dependency-free Win32 screen &amp; audio capture tool written in pure C. DXGI/D3D11 capture, H.264/HEVC encoding, WASAPI audio mixing." />
+  <style>
+    :root {
+      --bg: #0a0f1e;
+      --bg2: #0f172a;
+      --bg3: #1e2a45;
+      --accent: #3b82f6;
+      --accent2: #60a5fa;
+      --red: #dc2626;
+      --amber: #d97706;
+      --text: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border: #1e3a5f;
+      --radius: 12px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,15,30,.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .75rem 2rem;
+    }
+    .nav-logo { font-size: 1.1rem; font-weight: 700; color: var(--accent2); text-decoration: none; letter-spacing: -.3px; }
+    .nav-links { display: flex; gap: 1.5rem; list-style: none; }
+    .nav-links a { color: var(--text-muted); text-decoration: none; font-size: .9rem; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; overflow: hidden;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, #172554 0%, transparent 70%);
+    }
+    .hero::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(circle at 20% 80%, #1d4ed820 0%, transparent 50%),
+                  radial-gradient(circle at 80% 20%, #7c3aed15 0%, transparent 50%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(59,130,246,.15);
+      border: 1px solid rgba(59,130,246,.35);
+      color: var(--accent2);
+      border-radius: 999px;
+      padding: .25rem .9rem;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+    h1 {
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: 1.1;
+      margin-bottom: 1.25rem;
+    }
+    h1 span { color: var(--accent2); }
+    .hero-sub {
+      max-width: 640px; margin: 0 auto 2.5rem;
+      color: var(--text-muted); font-size: 1.1rem;
+    }
+    .cta-row { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: .5rem;
+      padding: .75rem 1.75rem;
+      border-radius: var(--radius);
+      font-size: .95rem; font-weight: 600;
+      text-decoration: none; cursor: pointer;
+      transition: transform .15s, box-shadow .15s, opacity .15s;
+    }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(59,130,246,.35);
+    }
+    .btn-primary:hover { box-shadow: 0 6px 32px rgba(59,130,246,.55); }
+    .btn-ghost {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      color: var(--text);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,.1); }
+
+    /* ── PILL TAGS ── */
+    .tags { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin-top: 2.5rem; }
+    .tag {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 999px;
+      padding: .2rem .8rem;
+      font-size: .78rem;
+      color: var(--text-muted);
+    }
+
+    /* ── SECTION ── */
+    section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      display: inline-block;
+      font-size: .75rem; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: .75rem;
+    }
+    h2 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800; letter-spacing: -.02em;
+      margin-bottom: 1rem;
+    }
+    .section-desc { color: var(--text-muted); max-width: 580px; margin-bottom: 3rem; }
+
+    /* ── SCREENSHOTS ── */
+    .screenshots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      gap: 2rem;
+    }
+    .screenshot-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .screenshot-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,.5); }
+    .screenshot-card img, .screenshot-card object { width: 100%; display: block; }
+    .screenshot-info { padding: 1rem 1.25rem; }
+    .screenshot-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: .25rem; }
+    .screenshot-info p { font-size: .85rem; color: var(--text-muted); }
+
+    /* ── FEATURES ── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      transition: border-color .2s;
+    }
+    .feature-card:hover { border-color: var(--accent); }
+    .feature-icon {
+      width: 44px; height: 44px;
+      background: rgba(59,130,246,.12);
+      border: 1px solid rgba(59,130,246,.25);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: .4rem; }
+    .feature-card p { font-size: .85rem; color: var(--text-muted); }
+
+    /* ── BUILD ── */
+    .build-block {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .code-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: .6rem 1rem;
+      background: var(--bg3);
+      border-bottom: 1px solid var(--border);
+      font-size: .78rem; color: var(--text-muted);
+    }
+    .code-dots { display: flex; gap: .4rem; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ef4444; }
+    .dot-y { background: #f59e0b; }
+    .dot-g { background: #22c55e; }
+    pre {
+      padding: 1.5rem;
+      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+      font-size: .88rem;
+      color: var(--text);
+      overflow-x: auto;
+      line-height: 1.7;
+    }
+    .cmd { color: #60a5fa; }
+    .comment { color: #475569; }
+    .target { color: #34d399; }
+
+    /* ── HOTKEYS ── */
+    .hotkeys-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1rem;
+    }
+    .hotkey-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .75rem 1rem;
+    }
+    .hotkey-action { font-size: .9rem; }
+    .kbd-group { display: flex; gap: .3rem; flex-wrap: wrap; justify-content: flex-end; }
+    kbd {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: .15rem .4rem;
+      font-size: .75rem;
+      font-family: inherit;
+      color: var(--accent2);
+    }
+
+    /* ── SPEC TABLE ── */
+    .spec-table { width: 100%; border-collapse: collapse; }
+    .spec-table th {
+      text-align: left; padding: .6rem 1rem;
+      background: var(--bg3); color: var(--text-muted);
+      font-size: .8rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+    .spec-table td {
+      padding: .75rem 1rem;
+      border-bottom: 1px solid rgba(30,58,95,.4);
+      font-size: .9rem;
+    }
+    .spec-table tr:last-child td { border-bottom: none; }
+    .spec-table tr:hover td { background: rgba(255,255,255,.025); }
+    .chip {
+      display: inline-block;
+      background: rgba(59,130,246,.12);
+      border: 1px solid rgba(59,130,246,.2);
+      color: var(--accent2);
+      border-radius: 4px;
+      padding: .1rem .45rem;
+      font-size: .78rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      text-align: center;
+      padding: 2.5rem 2rem;
+      color: var(--text-muted);
+      font-size: .85rem;
+    }
+    footer a { color: var(--accent2); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── DIVIDER ── */
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    @media (max-width: 600px) {
+      nav { padding: .75rem 1rem; }
+      .nav-links { gap: 1rem; }
+      .screenshots-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a class="nav-logo" href="#">⬛ WinCapture</a>
+  <ul class="nav-links">
+    <li><a href="#screenshots">Screenshots</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#build">Build</a></li>
+    <li><a href="https://github.com/UnCrevard/WinCapture" target="_blank" rel="noopener">GitHub ↗</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <div class="badge">Pure C · Win32 · Zero dependencies</div>
+  <h1>Win32 Screen &amp; Audio<br/><span>Capture, Reimagined</span></h1>
+  <p class="hero-sub">
+    A lightweight, dependency-free capture tool written entirely in C.
+    DXGI/D3D11 hardware acceleration, H.264/HEVC encoding,
+    WASAPI audio mixing — no installer, no bloat.
+  </p>
+  <div class="cta-row">
+    <a class="btn btn-primary" href="https://github.com/UnCrevard/WinCapture/releases" target="_blank" rel="noopener">
+      ⬇ Download Latest
+    </a>
+    <a class="btn btn-ghost" href="https://github.com/UnCrevard/WinCapture" target="_blank" rel="noopener">
+      View Source
+    </a>
+  </div>
+  <div class="tags">
+    <span class="tag">Windows 10 / 11</span>
+    <span class="tag">64-bit &amp; 32-bit</span>
+    <span class="tag">DXGI Desktop Duplication</span>
+    <span class="tag">Media Foundation</span>
+    <span class="tag">WASAPI</span>
+    <span class="tag">UI Automation</span>
+    <span class="tag">MinGW / GCC</span>
+  </div>
+</header>
+
+<hr class="divider"/>
+
+<!-- ── SCREENSHOTS ── -->
+<section id="screenshots">
+  <div class="section-label">In Action</div>
+  <h2>See WinCapture in Action</h2>
+  <p class="section-desc">
+    Every pixel of UI is rendered by Win32 GDI — no frameworks, no Electron, no Chromium embedded.
+  </p>
+  <div class="screenshots-grid">
+    <div class="screenshot-card">
+      <img src="../docs/screenshots/floating-bar-capture.svg" alt="Floating toolbar and hollow capture frame" loading="lazy"/>
+      <div class="screenshot-info">
+        <h3>Floating Toolbar &amp; Hollow Capture Frame</h3>
+        <p>Collapses when idle, expands on hover. Live W×H@X,Y readout, size presets, tray minimize.</p>
+      </div>
+    </div>
+    <div class="screenshot-card">
+      <img src="../docs/screenshots/window-targeting-magnifier.svg" alt="Window targeting with 4x pixel magnifier" loading="lazy"/>
+      <div class="screenshot-info">
+        <h3>Window Targeting &amp; 4× Pixel Magnifier</h3>
+        <p>UI Automation highlights windows and inner panels. Real-time 4× loupe with RGB readout.</p>
+      </div>
+    </div>
+    <div class="screenshot-card">
+      <img src="../docs/screenshots/recording-and-clicks.svg" alt="Active recording with click highlights" loading="lazy"/>
+      <div class="screenshot-info">
+        <h3>Active Recording &amp; Click Highlights</h3>
+        <p>Frame turns crimson during recording, amber when paused. Click-ripple halos rendered into video.</p>
+      </div>
+    </div>
+    <div class="screenshot-card">
+      <img src="../docs/screenshots/settings-dark-mode.svg" alt="Settings in dark mode" loading="lazy"/>
+      <div class="screenshot-info">
+        <h3>Settings — Dark / Light Theme</h3>
+        <p>Automatically follows <code>AppsUseLightTheme</code> in real time, including DWM title bars.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── FEATURES ── -->
+<section id="features">
+  <div class="section-label">Capabilities</div>
+  <h2>Everything You Need, Nothing You Don't</h2>
+  <p class="section-desc">Built on Windows platform APIs — hardware-accelerated, zero-latency, zero runtime dependencies.</p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🎬</div>
+      <h3>H.264 &amp; H.265 Video</h3>
+      <p>GPU-accelerated pipeline via DXGI Desktop Duplication → D3D11 VideoProcessor → Media Foundation. BGRA→NV12 on the GPU, minimal CPU overhead.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔊</div>
+      <h3>WASAPI Audio Mixing</h3>
+      <p>System loopback + optional microphone, resampled and mixed in real time to AAC at 44.1 / 48 kHz. Start/stop cues muted automatically.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔍</div>
+      <h3>UI Automation Targeter</h3>
+      <p>Scroll the wheel to step through UI hierarchy levels. Snap to any window, panel, or free-form rectangle. 4× pixel magnifier with crosshair &amp; RGB readout.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📸</div>
+      <h3>PNG / JPEG / BMP Screenshots</h3>
+      <p>Windows Imaging Component capture. Optional countdown timer (3s / 5s / 10s), auto clipboard copy, quick-tray shortcuts.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖥</div>
+      <h3>Per-Monitor DPI Aware</h3>
+      <p>PerMonitorV2 DPI awareness with WM_DPICHANGED. Crisp rendering across mixed-DPI multi-monitor setups.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌗</div>
+      <h3>Auto Dark / Light Mode</h3>
+      <p>Reads <code>AppsUseLightTheme</code> and updates DWM attributes in real time — including title bars and all custom-drawn controls.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌍</div>
+      <h3>Multilingual UI</h3>
+      <p>English, Français, Español, Deutsch — auto-detected on first launch, stored in <code>capture.ini</code> alongside all settings.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Zero Dependencies</h3>
+      <p>Links only against standard Windows system libraries. No runtime, no installer, no third-party DLLs. Just <code>WinCapture.exe</code>.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⏯</div>
+      <h3>Pause / Resume Recording</h3>
+      <p>Pause and resume seamlessly without splitting files. Bar turns amber on pause, crimson on record.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── SPEC TABLE ── -->
+<section id="specs">
+  <div class="section-label">Technical Specs</div>
+  <h2>Under the Hood</h2>
+  <p class="section-desc">Every component maps directly to a Windows platform API — no abstractions, no overhead.</p>
+  <div class="build-block">
+    <table class="spec-table">
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>API / Technology</th>
+          <th>Details</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Screen capture</td><td><span class="chip">DXGI Desktop Duplication</span></td><td>Hardware-accelerated, monitors all displays</td></tr>
+        <tr><td>Video encoding</td><td><span class="chip">Media Foundation IMFSinkWriter</span></td><td>H.264 AVC &amp; H.265 HEVC → .mp4</td></tr>
+        <tr><td>Color conversion</td><td><span class="chip">D3D11 VideoProcessor</span></td><td>BGRA → NV12 on GPU, falls back to GDI</td></tr>
+        <tr><td>Rate control</td><td><span class="chip">ICodecAPI</span></td><td>Target bitrate (2–32 Mb/s) or QP (0–51) per frame type</td></tr>
+        <tr><td>System audio</td><td><span class="chip">WASAPI Loopback</span></td><td>Shared-mode capture, real-time mix</td></tr>
+        <tr><td>Microphone</td><td><span class="chip">WASAPI Render</span></td><td>Mixed &amp; resampled to 44.1 / 48 kHz AAC</td></tr>
+        <tr><td>Screenshots</td><td><span class="chip">WIC IWICImagingFactory</span></td><td>PNG, JPEG (60–100%), BMP + clipboard CF_DIB</td></tr>
+        <tr><td>Window targeting</td><td><span class="chip">IUIAutomation</span></td><td>Tree walk, hover highlight, 4× magnifier</td></tr>
+        <tr><td>DPI awareness</td><td><span class="chip">PerMonitorV2</span></td><td>app.manifest + WM_DPICHANGED handler</td></tr>
+        <tr><td>Theme detection</td><td><span class="chip">DwmSetWindowAttribute</span></td><td>Reads AppsUseLightTheme, updates DWM in real time</td></tr>
+        <tr><td>Overlay exclusion</td><td><span class="chip">SetWindowDisplayAffinity</span></td><td>WDA_EXCLUDEFROMCAPTURE — UI never appears in captures</td></tr>
+        <tr><td>Fallback capture</td><td><span class="chip">GDI BitBlt</span></td><td>Used when DXGI is unavailable</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── HOTKEYS ── -->
+<section id="hotkeys">
+  <div class="section-label">Shortcuts</div>
+  <h2>Global Hotkeys</h2>
+  <p class="section-desc">All hotkeys are customizable in the Settings dialog.</p>
+  <div class="hotkeys-grid">
+    <div class="hotkey-row">
+      <span class="hotkey-action">📸 Screenshot</span>
+      <div class="kbd-group"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>S</kbd></div>
+    </div>
+    <div class="hotkey-row">
+      <span class="hotkey-action">🎬 Record / Stop</span>
+      <div class="kbd-group"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>R</kbd></div>
+    </div>
+    <div class="hotkey-row">
+      <span class="hotkey-action">⏸ Pause / Resume</span>
+      <div class="kbd-group"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>P</kbd></div>
+    </div>
+    <div class="hotkey-row">
+      <span class="hotkey-action">🖥 Full Screen</span>
+      <div class="kbd-group"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>F</kbd></div>
+    </div>
+    <div class="hotkey-row">
+      <span class="hotkey-action">↔ Move frame 1px</span>
+      <div class="kbd-group"><kbd>Arrow keys</kbd></div>
+    </div>
+    <div class="hotkey-row">
+      <span class="hotkey-action">↔ Move frame 10px</span>
+      <div class="kbd-group"><kbd>Shift</kbd><kbd>Arrow keys</kbd></div>
+    </div>
+    <div class="hotkey-row">
+      <span class="hotkey-action">↕ Resize frame 1px</span>
+      <div class="kbd-group"><kbd>Ctrl</kbd><kbd>Arrow keys</kbd></div>
+    </div>
+    <div class="hotkey-row">
+      <span class="hotkey-action">↕ Resize frame 10px</span>
+      <div class="kbd-group"><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>Arrow keys</kbd></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── BUILD ── -->
+<section id="build">
+  <div class="section-label">Build from Source</div>
+  <h2>Compile in Seconds</h2>
+  <p class="section-desc">Only MinGW-w64 and GNU make required. No third-party libraries, no package managers.</p>
+  <div class="build-block">
+    <div class="code-header">
+      <div class="code-dots">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+      </div>
+      <span>cmd.exe / MSYS2 / PowerShell</span>
+    </div>
+    <pre><span class="comment"># Clone the repository</span>
+<span class="cmd">git</span> clone https://github.com/UnCrevard/WinCapture.git
+<span class="cmd">cd</span> WinCapture
+
+<span class="comment"># Build WinCapture.exe</span>
+<span class="cmd">make</span>
+
+<span class="comment"># Or build and launch directly</span>
+<span class="cmd">make</span> <span class="target">run</span>
+
+<span class="comment"># Available targets</span>
+<span class="cmd">make</span> <span class="target">all</span>     <span class="comment"># Build WinCapture.exe</span>
+<span class="cmd">make</span> <span class="target">run</span>     <span class="comment"># Build + launch</span>
+<span class="cmd">make</span> <span class="target">clean</span>   <span class="comment"># Remove obj/</span>
+<span class="cmd">make</span> <span class="target">fclean</span>  <span class="comment"># Remove obj/ + WinCapture.exe</span>
+<span class="cmd">make</span> <span class="target">re</span>      <span class="comment"># Clean rebuild</span></pre>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <p>
+    Built with pure C and Win32 APIs &nbsp;·&nbsp;
+    <a href="https://github.com/UnCrevard/WinCapture" target="_blank" rel="noopener">GitHub</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/UnCrevard/WinCapture/releases" target="_blank" rel="noopener">Releases</a>
+    &nbsp;·&nbsp;
+    <a href="https://github.com/UnCrevard/WinCapture/blob/main/README.md" target="_blank" rel="noopener">README</a>
+  </p>
+  <p style="margin-top:.5rem; color: #475569;">WinCapture — Windows 10 / 11 &nbsp;·&nbsp; MIT License</p>
+</footer>
+
+</body>
+</html>
