@@ -394,6 +394,7 @@ HRESULT sink_open(const WCHAR *path, int w, int h, BOOL gpuMode)
     IMFAttributes_SetUINT32(at, &MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, 1);
     IMFAttributes_SetUINT32(at, &MF_SINK_WRITER_DISABLE_THROTTLING, 1);
     if (g_cfg.container == 1) {
+        /* Le muxeur MPEG-2 natif écrit le flux TS pendant l'enregistrement. */
         hr = IMFAttributes_SetGUID(at, &MF_TRANSCODE_CONTAINERTYPE, &MFTranscodeContainerType_MPEG2);
         if (FAILED(hr)) { REL(at); return hr; }
     }
@@ -501,6 +502,7 @@ void rec_stop(void)
     if (n > 0) WaitForMultipleObjects(n, h, TRUE, 10000);
     for (int i = 0; i < n; i++) CloseHandle(h[i]);
     play_rec_sound();
+    /* Finalize vide et ferme le muxeur; aucun remux post-enregistrement n'est lancé. */
     IMFSinkWriter_Finalize(rc.sw);
     REL(rc.sw);
     gpu_free();

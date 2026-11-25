@@ -118,7 +118,7 @@ typedef struct {
     int delay;    /* retardateur image en secondes : 0 / 3 / 5 / 10 */
     int clicks;   /* 1 = halo visuel sur les clics souris en vidéo */
     int hkPause;  /* raccourci global « pause / reprendre » */
-    int container; /* 0 = MP4, 1 = MPEG-TS */
+    int container; /* 0 = MP4, 1 = MPEG-TS (default) */
 } CFG;
 
 #define MAXS 24
@@ -249,6 +249,10 @@ typedef struct {
     X(S_DIR_T, L"Folder", L"Dossier", L"Carpeta", L"Ordner") \
     X(S_DIR_ERR, L"Unable to open the folder picker.", L"Impossible d’ouvrir le sélecteur de dossier.", L"No se puede abrir el selector de carpetas.", L"Der Ordnerauswahldialog kann nicht geöffnet werden.") \
     X(S_SETTINGS_T, L"Settings", L"Réglages", L"Ajustes", L"Einstellungen") \
+    X(S_GROUP_VIDEO, L"Video", L"Vidéo", L"Vídeo", L"Video") \
+    X(S_GROUP_IMAGE, L"Image", L"Image", L"Imagen", L"Bild") \
+    X(S_GROUP_FILENAME, L"File names", L"Noms de fichiers", L"Nombres de archivo", L"Dateinamen") \
+    X(S_GROUP_GENERAL, L"General", L"Général", L"General", L"Allgemein") \
     X(S_WAV_FILES, L"WAV files", L"Fichiers WAV", L"Archivos WAV", L"WAV-Dateien") \
     X(S_LANGUAGE, L"Language", L"Langue", L"Idioma", L"Sprache") \
     X(S_CHK_GPU, L"GPU capture (DirectX)", L"Capture GPU (DirectX)", L"Captura por GPU (DirectX)", L"GPU-Aufnahme (DirectX)") \

@@ -1234,19 +1234,19 @@ LRESULT CALLBACK MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
 /* ------------------------------------------------------------------ */
 /* Popup de réglages (tray)                                            */
 /* ------------------------------------------------------------------ */
-typedef struct { int label; int *tgt; int n; const WCHAR *txt[6]; int tid[6]; int val[6]; int y; } ROW;
+typedef struct { int label; int *tgt; int n; const WCHAR *txt[6]; int tid[6]; int val[6]; int x, y; } ROW;
 static ROW g_rows[] = {
-    { S_ROW_VCODEC, &g_cfg.vcodec, 2, { L"H.264 (AVC)", L"H.265 (HEVC)" }, { 0 }, { 0, 1 }, 12 },
+    { S_ROW_VCODEC, &g_cfg.vcodec, 2, { L"H.264 (AVC)", L"H.265 (HEVC)" }, { 0 }, { 0, 1 }, 18, 24 },
     { S_ROW_VBR,    &g_cfg.vkbps,  5, { L"2 Mb/s", L"4 Mb/s", L"8 Mb/s", L"16 Mb/s", L"32 Mb/s" }, { 0 },
-                                      { 2000, 4000, 8000, 16000, 32000 }, 42 },
-    { S_ROW_FPS,    &g_cfg.fps,    4, { L"15", L"24", L"30", L"60" }, { 0 }, { 15, 24, 30, 60 }, 72 },
+                                      { 2000, 4000, 8000, 16000, 32000 }, 18, 84 },
+    { S_ROW_FPS,    &g_cfg.fps,    4, { L"15", L"24", L"30", L"60" }, { 0 }, { 15, 24, 30, 60 }, 18, 114 },
     { S_ROW_ABR,    &g_cfg.akbps,  4, { L"96 kb/s", L"128 kb/s", L"160 kb/s", L"192 kb/s" }, { 0 },
-                                      { 96, 128, 160, 192 }, 132 },
-    { S_ROW_IMGFMT, &g_cfg.imgfmt, 3, { L"PNG", L"JPEG", L"BMP" }, { 0 }, { 0, 1, 2 }, 192 },
+                                      { 96, 128, 160, 192 }, 306, 24 },
+    { S_ROW_IMGFMT, &g_cfg.imgfmt, 3, { L"PNG", L"JPEG", L"BMP" }, { 0 }, { 0, 1, 2 }, 606, 24 },
     { S_ROW_JPGQ,   &g_cfg.jpgq,   5, { L"60 %", L"75 %", L"85 %", L"95 %", L"100 %" }, { 0 },
-                                      { 60, 75, 85, 95, 100 }, 222 },
+                                      { 60, 75, 85, 95, 100 }, 606, 54 },
     { S_ROW_SOUND,  &g_cfg.sound,  4, { NULL }, { S_SND_DEF, S_SND_SHUT, S_SND_FILE, S_SND_NONE },
-                                      { 0, 1, 2, 3 }, 252 },
+                                      { 0, 1, 2, 3 }, 606, 84 },
 };
 
 static BOOL pick_sound_file(WCHAR *dst)
@@ -1363,104 +1363,33 @@ LRESULT CALLBACK CfgProc(HWND h, UINT m, WPARAM w, LPARAM l)
 {
     switch (m) {
     case WM_CREATE:
-        /* Colonne 1 : vidéo, audio, image, dossier et raccourcis */
+        mk(h, L"BUTTON", T(S_GROUP_VIDEO), BS_GROUPBOX, 8, 8, 570, 350, 0);
+        mk(h, L"BUTTON", T(S_GROUP_IMAGE), BS_GROUPBOX, 590, 8, 282, 258, 0);
+        mk(h, L"BUTTON", T(S_GROUP_FILENAME), BS_GROUPBOX, 590, 272, 282, 232, 0);
+        mk(h, L"BUTTON", T(S_GROUP_GENERAL), BS_GROUPBOX, 8, 360, 570, 144, 0);
+
         for (int i = 0; i < (int)ARRAYSIZE(g_rows); i++) {
             ROW *r = &g_rows[i];
             HWND cb;
             int sel = 0;
-            mk(h, L"STATIC", T(r->label), SS_LEFT, 12, r->y + 4, 130, 20, 0);
-            cb = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 150, r->y, 130, 200, ID_COMBO0 + i);
+            mk(h, L"STATIC", T(r->label), SS_LEFT, r->x, r->y + 4, 130, 20, 0);
+            cb = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, r->x + 138, r->y, 130, 200, ID_COMBO0 + i);
             for (int k = 0; k < r->n; k++) {
                 SendMessageW(cb, CB_ADDSTRING, 0, (LPARAM)(r->tid[k] ? T(r->tid[k]) : r->txt[k]));
                 if (r->val[k] == *r->tgt) sel = k;
             }
             SendMessageW(cb, CB_SETCURSEL, sel, 0);
         }
-        mk(h, L"BUTTON", T(S_CHK_AUDIO), BS_AUTOCHECKBOX | WS_TABSTOP, 12, 102, 268, 22, ID_CHK_AUDIO);
-        CheckDlgButton(h, ID_CHK_AUDIO, g_cfg.audio ? BST_CHECKED : BST_UNCHECKED);
-        mk(h, L"BUTTON", T(S_CHK_MIC), BS_AUTOCHECKBOX | WS_TABSTOP, 12, 162, 268, 22, ID_CHK_MIC);
-        CheckDlgButton(h, ID_CHK_MIC, g_cfg.mic ? BST_CHECKED : BST_UNCHECKED);
-
-        mk(h, L"STATIC", T(S_ROW_RSOUND), SS_LEFT, 12, 286, 130, 20, 0);
+        mk(h, L"STATIC", T(S_ROW_CONTAINER), SS_LEFT, 18, 58, 130, 20, 0);
         {
-            static const int sid[4] = { S_SND_DEF, S_SND_SHUT, S_SND_FILE, S_SND_NONE };
-            HWND cs = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 150, 282, 130, 200, ID_CMB_RSND);
-            for (int k = 0; k < 4; k++) SendMessageW(cs, CB_ADDSTRING, 0, (LPARAM)T(sid[k]));
-            SendMessageW(cs, CB_SETCURSEL, (g_cfg.soundRec >= 0 && g_cfg.soundRec < 4) ? g_cfg.soundRec : 0, 0);
+            HWND cb = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 156, 54, 130, 200, ID_CMB_CONTAINER);
+            SendMessageW(cb, CB_ADDSTRING, 0, (LPARAM)L"MP4");
+            SendMessageW(cb, CB_ADDSTRING, 0, (LPARAM)L"MPEG-TS");
+            SendMessageW(cb, CB_SETCURSEL, g_cfg.container == 1 ? 1 : 0, 0);
         }
-        mk(h, L"BUTTON", T(S_CHK_CURSOR), BS_AUTOCHECKBOX | WS_TABSTOP, 12, 312, 268, 22, ID_CHK_CURSOR);
-        CheckDlgButton(h, ID_CHK_CURSOR, g_cfg.cursor ? BST_CHECKED : BST_UNCHECKED);
-        mk(h, L"BUTTON", T(S_CHK_CLICKS), BS_AUTOCHECKBOX | WS_TABSTOP, 12, 336, 268, 22, ID_CHK_CLICKS);
-        CheckDlgButton(h, ID_CHK_CLICKS, g_cfg.clicks ? BST_CHECKED : BST_UNCHECKED);
-        mk(h, L"BUTTON", T(S_CHK_VFR), BS_AUTOCHECKBOX | WS_TABSTOP, 12, 360, 268, 22, ID_CHK_VFR);
-        CheckDlgButton(h, ID_CHK_VFR, g_cfg.vfr ? BST_CHECKED : BST_UNCHECKED);
-        mk(h, L"STATIC", T(S_DIR_T), SS_LEFT, 12, 392, 62, 20, 0);
-        mk(h, L"STATIC", L"", SS_LEFT | SS_PATHELLIPSIS, 78, 392, 162, 20, ID_TXT_DIR);
-        mk(h, L"BUTTON", L"…", BS_PUSHBUTTON | WS_TABSTOP, 246, 388, 34, 24, ID_BTN_DIR);
-        dir_refresh(h);
-        mk(h, L"STATIC", T(S_HK_LBL_IMG), SS_LEFT, 12, 424, 130, 20, 0);
-        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 150, 420, 130, 22, ID_HK_SHOT);
-        mk(h, L"STATIC", T(S_HK_LBL_VID), SS_LEFT, 12, 452, 130, 20, 0);
-        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 150, 448, 130, 22, ID_HK_REC);
-        mk(h, L"STATIC", T(S_HK_LBL_PAUSE), SS_LEFT, 12, 480, 130, 20, 0);
-        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 150, 476, 130, 22, ID_HK_PAUSE);
+        mk(h, L"STATIC", T(S_RC_LBL), SS_LEFT, 18, 148, 130, 20, 0);
         {
-            static const int hkIds[3] = { ID_HK_SHOT, ID_HK_REC, ID_HK_PAUSE };
-            const int hkVals[3] = { g_cfg.hkShot, g_cfg.hkRec, g_cfg.hkPause };
-            for (int k = 0; k < 3; k++) {
-                HWND hkc = GetDlgItem(h, hkIds[k]);
-                SendMessageW(hkc, HKM_SETRULES, HKCOMB_S, MAKELPARAM(HOTKEYF_CONTROL | HOTKEYF_ALT, 0));
-                SendMessageW(hkc, HKM_SETHOTKEY, (WPARAM)hkVals[k], 0);
-            }
-        }
-
-        /* Colonne 2 : apparence, noms de fichiers, options rapides, langue, GPU, retardateur */
-        mk(h, L"STATIC", T(S_COL_FRAME), SS_LEFT, 306, 16, 130, 20, 0);
-        mk(h, L"BUTTON", L"", BS_OWNERDRAW | WS_TABSTOP, 444, 12, 130, 24, ID_COL_FRAME);
-        mk(h, L"STATIC", T(S_COL_BAR), SS_LEFT, 306, 46, 130, 20, 0);
-        mk(h, L"BUTTON", L"", BS_OWNERDRAW | WS_TABSTOP, 444, 42, 130, 24, ID_COL_TITLE);
-        mk(h, L"STATIC", L"", SS_LEFT, 306, 78, 268, 18, ID_TXT_TRANSP);
-        mk(h, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS, 306, 96, 268, 30, ID_TRK_TRANSP);
-        SendDlgItemMessageW(h, ID_TRK_TRANSP, TBM_SETRANGE, TRUE, MAKELONG(0, 80));
-        SendDlgItemMessageW(h, ID_TRK_TRANSP, TBM_SETTICFREQ, 10, 0);
-        SendDlgItemMessageW(h, ID_TRK_TRANSP, TBM_SETPAGESIZE, 0, 10);
-        SendDlgItemMessageW(h, ID_TRK_TRANSP, TBM_SETPOS, TRUE, g_cfg.transp);
-        transp_label(h);
-        mk(h, L"STATIC", T(S_NAME_LBL), SS_LEFT, 306, 136, 268, 18, 0);
-        mk(h, L"EDIT", g_nameFmt, WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL, 306, 156, 268, 22, ID_EDT_NAME);
-        SendDlgItemMessageW(h, ID_EDT_NAME, EM_LIMITTEXT, 120, 0);
-        mk(h, L"STATIC", T(S_NAME_HINT), SS_LEFT, 306, 184, 268, 72, 0);
-        mk(h, L"BUTTON", T(S_CHK_CLIP), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 262, 268, 22, ID_CHK_CLIP);
-        CheckDlgButton(h, ID_CHK_CLIP, g_cfg.clip ? BST_CHECKED : BST_UNCHECKED);
-        mk(h, L"BUTTON", T(S_CHK_EXCL), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 286, 268, 22, ID_CHK_EXCL);
-        CheckDlgButton(h, ID_CHK_EXCL, g_cfg.excl ? BST_CHECKED : BST_UNCHECKED);
-        mk(h, L"STATIC", T(S_LANGUAGE), SS_LEFT, 306, 322, 130, 20, 0);
-        {
-            static const WCHAR *const lnames[4] = { L"English", L"Français", L"Español", L"Deutsch" };
-            HWND cl = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 444, 318, 130, 200, ID_CMB_LANG);
-            for (int k = 0; k < 4; k++) SendMessageW(cl, CB_ADDSTRING, 0, (LPARAM)lnames[k]);
-            SendMessageW(cl, CB_SETCURSEL, (g_cfg.lang >= 0 && g_cfg.lang < 4) ? g_cfg.lang : 0, 0);
-        }
-        mk(h, L"BUTTON", T(S_CHK_GPU), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 354, 268, 22, ID_CHK_GPU);
-        CheckDlgButton(h, ID_CHK_GPU, g_cfg.gpu ? BST_CHECKED : BST_UNCHECKED);
-        mk(h, L"STATIC", T(S_GPU_HINT), SS_LEFT, 306, 378, 268, 46, 0);
-        mk(h, L"STATIC", T(S_ROW_DELAY), SS_LEFT, 306, 442, 130, 20, 0);
-        {
-            static const int dids[4] = { S_DLY_0, S_DLY_3, S_DLY_5, S_DLY_10 };
-            static const int dvals[4] = { 0, 3, 5, 10 };
-            HWND cd = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 444, 438, 130, 200, ID_CMB_DELAY);
-            int dsel = 0;
-            for (int k = 0; k < 4; k++) {
-                SendMessageW(cd, CB_ADDSTRING, 0, (LPARAM)T(dids[k]));
-                if (dvals[k] == g_cfg.delay) dsel = k;
-            }
-            SendMessageW(cd, CB_SETCURSEL, dsel, 0);
-        }
-
-        /* Colonne 3 : contrôle du débit / QP et plein écran */
-        mk(h, L"STATIC", T(S_RC_LBL), SS_LEFT, 598, 16, 130, 20, 0);
-        {
-            HWND cb = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 736, 12, 130, 200, ID_CMB_RC);
+            HWND cb = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 156, 144, 130, 200, ID_CMB_RC);
             SendMessageW(cb, CB_ADDSTRING, 0, (LPARAM)T(S_RC_BR));
             SendMessageW(cb, CB_ADDSTRING, 0, (LPARAM)T(S_RC_QP));
             SendMessageW(cb, CB_SETCURSEL, g_cfg.rcmode == 1 ? 1 : 0, 0);
@@ -1471,9 +1400,9 @@ LRESULT CALLBACK CfgProc(HWND h, UINT m, WPARAM w, LPARAM l)
             static const int uid[3] = { ID_UD_QPI, ID_UD_QPP, ID_UD_QPB };
             const int *val[3] = { &g_cfg.qpI, &g_cfg.qpP, &g_cfg.qpB };
             for (int k = 0; k < 3; k++) {
-                int y = 48 + k * 30; HWND ed, ud;
-                mk(h, L"STATIC", T(lbl[k]), SS_LEFT, 598, y + 4, 136, 20, 0);
-                ed = mk(h, L"EDIT", L"", WS_TABSTOP | WS_BORDER | ES_NUMBER | ES_AUTOHSCROLL, 736, y, 90, 22, eid[k]);
+                int y = 174 + k * 28; HWND ed, ud;
+                mk(h, L"STATIC", T(lbl[k]), SS_LEFT, 18, y + 4, 136, 20, 0);
+                ed = mk(h, L"EDIT", L"", WS_TABSTOP | WS_BORDER | ES_NUMBER | ES_AUTOHSCROLL, 156, y, 90, 22, eid[k]);
                 ud = CreateWindowExW(0, UPDOWN_CLASSW, NULL,
                                      WS_CHILD | WS_VISIBLE | UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_ARROWKEYS | UDS_NOTHOUSANDS,
                                      0, 0, 0, 0, h, (HMENU)(INT_PTR)uid[k], g_inst, NULL);
@@ -1482,18 +1411,92 @@ LRESULT CALLBACK CfgProc(HWND h, UINT m, WPARAM w, LPARAM l)
                 SendMessageW(ud, UDM_SETBUDDY, (WPARAM)ed, 0);
             }
         }
-        mk(h, L"STATIC", T(S_QP_HINT), SS_LEFT, 598, 146, 268, 130, 0);
+        mk(h, L"STATIC", T(S_QP_HINT), SS_LEFT, 18, 282, 556, 68, 0);
         qp_enable(h);
-        mk(h, L"STATIC", T(S_HK_LBL_FULL), SS_LEFT, 598, 296, 136, 20, 0);
-        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 736, 292, 130, 22, ID_HK_FULL);
-        SendDlgItemMessageW(h, ID_HK_FULL, HKM_SETRULES, HKCOMB_S, MAKELPARAM(HOTKEYF_CONTROL | HOTKEYF_ALT, 0));
-        SendDlgItemMessageW(h, ID_HK_FULL, HKM_SETHOTKEY, (WPARAM)g_cfg.hkFull, 0);
-        mk(h, L"STATIC", T(S_ROW_CONTAINER), SS_LEFT, 598, 344, 130, 20, 0);
+
+        mk(h, L"BUTTON", T(S_CHK_AUDIO), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 54, 268, 22, ID_CHK_AUDIO);
+        CheckDlgButton(h, ID_CHK_AUDIO, g_cfg.audio ? BST_CHECKED : BST_UNCHECKED);
+        mk(h, L"BUTTON", T(S_CHK_MIC), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 78, 268, 22, ID_CHK_MIC);
+        CheckDlgButton(h, ID_CHK_MIC, g_cfg.mic ? BST_CHECKED : BST_UNCHECKED);
+
+        mk(h, L"STATIC", T(S_ROW_RSOUND), SS_LEFT, 306, 110, 130, 20, 0);
         {
-            HWND cb = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 736, 340, 130, 200, ID_CMB_CONTAINER);
-            SendMessageW(cb, CB_ADDSTRING, 0, (LPARAM)L"MP4");
-            SendMessageW(cb, CB_ADDSTRING, 0, (LPARAM)L"MPEG-TS");
-            SendMessageW(cb, CB_SETCURSEL, g_cfg.container == 1 ? 1 : 0, 0);
+            static const int sid[4] = { S_SND_DEF, S_SND_SHUT, S_SND_FILE, S_SND_NONE };
+            HWND cs = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 444, 106, 130, 200, ID_CMB_RSND);
+            for (int k = 0; k < 4; k++) SendMessageW(cs, CB_ADDSTRING, 0, (LPARAM)T(sid[k]));
+            SendMessageW(cs, CB_SETCURSEL, (g_cfg.soundRec >= 0 && g_cfg.soundRec < 4) ? g_cfg.soundRec : 0, 0);
+        }
+        mk(h, L"BUTTON", T(S_CHK_CURSOR), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 136, 268, 22, ID_CHK_CURSOR);
+        CheckDlgButton(h, ID_CHK_CURSOR, g_cfg.cursor ? BST_CHECKED : BST_UNCHECKED);
+        mk(h, L"BUTTON", T(S_CHK_CLICKS), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 160, 268, 22, ID_CHK_CLICKS);
+        CheckDlgButton(h, ID_CHK_CLICKS, g_cfg.clicks ? BST_CHECKED : BST_UNCHECKED);
+        mk(h, L"BUTTON", T(S_CHK_VFR), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 184, 268, 22, ID_CHK_VFR);
+        CheckDlgButton(h, ID_CHK_VFR, g_cfg.vfr ? BST_CHECKED : BST_UNCHECKED);
+        mk(h, L"BUTTON", T(S_CHK_GPU), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 208, 268, 22, ID_CHK_GPU);
+        CheckDlgButton(h, ID_CHK_GPU, g_cfg.gpu ? BST_CHECKED : BST_UNCHECKED);
+        mk(h, L"STATIC", T(S_GPU_HINT), SS_LEFT, 306, 232, 268, 42, 0);
+        mk(h, L"STATIC", T(S_ROW_DELAY), SS_LEFT, 606, 118, 130, 20, 0);
+        {
+            static const int dids[4] = { S_DLY_0, S_DLY_3, S_DLY_5, S_DLY_10 };
+            static const int dvals[4] = { 0, 3, 5, 10 };
+            HWND cd = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 744, 114, 112, 200, ID_CMB_DELAY);
+            int dsel = 0;
+            for (int k = 0; k < 4; k++) {
+                SendMessageW(cd, CB_ADDSTRING, 0, (LPARAM)T(dids[k]));
+                if (dvals[k] == g_cfg.delay) dsel = k;
+            }
+            SendMessageW(cd, CB_SETCURSEL, dsel, 0);
+        }
+        mk(h, L"BUTTON", T(S_CHK_CLIP), BS_AUTOCHECKBOX | WS_TABSTOP, 606, 148, 250, 22, ID_CHK_CLIP);
+        CheckDlgButton(h, ID_CHK_CLIP, g_cfg.clip ? BST_CHECKED : BST_UNCHECKED);
+        mk(h, L"STATIC", T(S_HK_LBL_IMG), SS_LEFT, 606, 178, 130, 20, 0);
+        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 744, 174, 112, 22, ID_HK_SHOT);
+        SendMessageW(GetDlgItem(h, ID_HK_SHOT), HKM_SETRULES, HKCOMB_S, MAKELPARAM(HOTKEYF_CONTROL | HOTKEYF_ALT, 0));
+        SendMessageW(GetDlgItem(h, ID_HK_SHOT), HKM_SETHOTKEY, (WPARAM)g_cfg.hkShot, 0);
+
+        mk(h, L"STATIC", T(S_NAME_LBL), SS_LEFT, 602, 292, 260, 18, 0);
+        mk(h, L"EDIT", g_nameFmt, WS_TABSTOP | WS_BORDER | ES_AUTOHSCROLL, 602, 312, 260, 22, ID_EDT_NAME);
+        SendDlgItemMessageW(h, ID_EDT_NAME, EM_LIMITTEXT, 120, 0);
+        mk(h, L"STATIC", T(S_NAME_HINT), SS_LEFT, 602, 340, 260, 78, 0);
+        mk(h, L"STATIC", T(S_DIR_T), SS_LEFT, 602, 440, 60, 20, 0);
+        mk(h, L"STATIC", L"", SS_LEFT | SS_PATHELLIPSIS, 664, 440, 148, 20, ID_TXT_DIR);
+        mk(h, L"BUTTON", L"…", BS_PUSHBUTTON | WS_TABSTOP, 816, 436, 34, 24, ID_BTN_DIR);
+        dir_refresh(h);
+
+        mk(h, L"STATIC", T(S_COL_FRAME), SS_LEFT, 18, 380, 130, 20, 0);
+        mk(h, L"BUTTON", L"", BS_OWNERDRAW | WS_TABSTOP, 156, 376, 130, 24, ID_COL_FRAME);
+        mk(h, L"STATIC", T(S_COL_BAR), SS_LEFT, 18, 410, 130, 20, 0);
+        mk(h, L"BUTTON", L"", BS_OWNERDRAW | WS_TABSTOP, 156, 406, 130, 24, ID_COL_TITLE);
+        mk(h, L"STATIC", L"", SS_LEFT, 18, 438, 268, 18, ID_TXT_TRANSP);
+        mk(h, TRACKBAR_CLASSW, L"", WS_TABSTOP | TBS_HORZ | TBS_AUTOTICKS, 18, 458, 268, 30, ID_TRK_TRANSP);
+        SendDlgItemMessageW(h, ID_TRK_TRANSP, TBM_SETRANGE, TRUE, MAKELONG(0, 80));
+        SendDlgItemMessageW(h, ID_TRK_TRANSP, TBM_SETTICFREQ, 10, 0);
+        SendDlgItemMessageW(h, ID_TRK_TRANSP, TBM_SETPAGESIZE, 0, 10);
+        SendDlgItemMessageW(h, ID_TRK_TRANSP, TBM_SETPOS, TRUE, g_cfg.transp);
+        transp_label(h);
+        mk(h, L"STATIC", T(S_LANGUAGE), SS_LEFT, 306, 374, 130, 20, 0);
+        {
+            static const WCHAR *const lnames[4] = { L"English", L"Français", L"Español", L"Deutsch" };
+            HWND cl = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 444, 370, 130, 200, ID_CMB_LANG);
+            for (int k = 0; k < 4; k++) SendMessageW(cl, CB_ADDSTRING, 0, (LPARAM)lnames[k]);
+            SendMessageW(cl, CB_SETCURSEL, (g_cfg.lang >= 0 && g_cfg.lang < 4) ? g_cfg.lang : 0, 0);
+        }
+        mk(h, L"BUTTON", T(S_CHK_EXCL), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 400, 268, 22, ID_CHK_EXCL);
+        CheckDlgButton(h, ID_CHK_EXCL, g_cfg.excl ? BST_CHECKED : BST_UNCHECKED);
+        mk(h, L"STATIC", T(S_HK_LBL_VID), SS_LEFT, 306, 428, 130, 20, 0);
+        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 444, 424, 130, 22, ID_HK_REC);
+        mk(h, L"STATIC", T(S_HK_LBL_PAUSE), SS_LEFT, 306, 456, 130, 20, 0);
+        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 444, 452, 130, 22, ID_HK_PAUSE);
+        mk(h, L"STATIC", T(S_HK_LBL_FULL), SS_LEFT, 306, 484, 130, 20, 0);
+        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 444, 480, 130, 22, ID_HK_FULL);
+        {
+            static const int hkIds[3] = { ID_HK_REC, ID_HK_PAUSE, ID_HK_FULL };
+            const int hkVals[3] = { g_cfg.hkRec, g_cfg.hkPause, g_cfg.hkFull };
+            for (int k = 0; k < 3; k++) {
+                HWND hkc = GetDlgItem(h, hkIds[k]);
+                SendMessageW(hkc, HKM_SETRULES, HKCOMB_S, MAKELPARAM(HOTKEYF_CONTROL | HOTKEYF_ALT, 0));
+                SendMessageW(hkc, HKM_SETHOTKEY, (WPARAM)hkVals[k], 0);
+            }
         }
         dark_apply(h);
         return 0;
