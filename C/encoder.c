@@ -389,9 +389,14 @@ void encoder_set_d3d_manager(void *mgr) { g_sink_d3dmgr = mgr; }
 HRESULT sink_open(const WCHAR *path, int w, int h, BOOL gpuMode)
 {
     IMFAttributes *at = NULL; IMFMediaType *t = NULL; HRESULT hr;
-    MFCreateAttributes(&at, 3);
+    hr = MFCreateAttributes(&at, 4);
+    if (FAILED(hr)) return hr;
     IMFAttributes_SetUINT32(at, &MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, 1);
     IMFAttributes_SetUINT32(at, &MF_SINK_WRITER_DISABLE_THROTTLING, 1);
+    if (g_cfg.container == 1) {
+        hr = IMFAttributes_SetGUID(at, &MF_TRANSCODE_CONTAINERTYPE, &MFTranscodeContainerType_MPEG2);
+        if (FAILED(hr)) { REL(at); return hr; }
+    }
     if (gpuMode && g_sink_d3dmgr)
         IMFAttributes_SetUnknown(at, &MF_SINK_WRITER_D3D_MANAGER, (IUnknown *)g_sink_d3dmgr);
     hr = MFCreateSinkWriterFromURL(path, NULL, at, &rc.sw);
@@ -439,7 +444,7 @@ void rec_start(void)
         else balloon(T(S_AUDIO_T), T(S_AUDIO_M));
     }
 
-    make_path(TRUE, L"mp4", g_recPath);
+    make_path(TRUE, g_cfg.container == 1 ? L"ts" : L"mp4", g_recPath);
 
     hr = sink_open(g_recPath, w, h, useGpu);
     if (FAILED(hr) && useGpu) {

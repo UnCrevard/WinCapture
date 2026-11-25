@@ -230,23 +230,11 @@ static void draw_icon(HDC dc, const RECT *br, int id, COLORREF fg, COLORREF bg, 
                 if (dpen) { SelectObject(dc, op); DeleteObject(dpen); }
             }
         } else if (id == ID_CLOSE) {
-            int rx = r * 4 / 5, yTop = cy - r * 3 / 4, yBot = cy + r * 3 / 4;
-            int yTip = cy + r / 5, yTray = cy + r / 3, head = r * 2 / 5;
-            POINT tray[4], chev[3];
-            if (rx < 4) rx = 4;
-            if (head < 2) head = 2;
-            tray[0].x = cx - rx; tray[0].y = yTray;
-            tray[1].x = cx - rx; tray[1].y = yBot;
-            tray[2].x = cx + rx; tray[2].y = yBot;
-            tray[3].x = cx + rx; tray[3].y = yTray;
-            chev[0].x = cx - head; chev[0].y = yTip - head;
-            chev[1].x = cx;        chev[1].y = yTip;
-            chev[2].x = cx + head; chev[2].y = yTip - head;
+            int half = r * 3 / 4;
+            if (half < 4) half = 4;
             SelectObject(dc, pen2);
-            Polyline(dc, tray, 4);
-            MoveToEx(dc, cx, yTop, NULL);
-            LineTo(dc, cx, yTip);
-            Polyline(dc, chev, 3);
+            MoveToEx(dc, cx - half, cy + r / 2, NULL);
+            LineTo(dc, cx + half + 1, cy + r / 2);
         }
         SelectObject(dc, op);
         SelectObject(dc, ob);
@@ -1500,6 +1488,13 @@ LRESULT CALLBACK CfgProc(HWND h, UINT m, WPARAM w, LPARAM l)
         mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 736, 292, 130, 22, ID_HK_FULL);
         SendDlgItemMessageW(h, ID_HK_FULL, HKM_SETRULES, HKCOMB_S, MAKELPARAM(HOTKEYF_CONTROL | HOTKEYF_ALT, 0));
         SendDlgItemMessageW(h, ID_HK_FULL, HKM_SETHOTKEY, (WPARAM)g_cfg.hkFull, 0);
+        mk(h, L"STATIC", T(S_ROW_CONTAINER), SS_LEFT, 598, 344, 130, 20, 0);
+        {
+            HWND cb = mk(h, L"COMBOBOX", NULL, WS_TABSTOP | CBS_DROPDOWNLIST | WS_VSCROLL, 736, 340, 130, 200, ID_CMB_CONTAINER);
+            SendMessageW(cb, CB_ADDSTRING, 0, (LPARAM)L"MP4");
+            SendMessageW(cb, CB_ADDSTRING, 0, (LPARAM)L"MPEG-TS");
+            SendMessageW(cb, CB_SETCURSEL, g_cfg.container == 1 ? 1 : 0, 0);
+        }
         dark_apply(h);
         return 0;
     case WM_ERASEBKGND:
@@ -1581,6 +1576,12 @@ LRESULT CALLBACK CfgProc(HWND h, UINT m, WPARAM w, LPARAM l)
             g_cfg.rcmode = ((int)SendMessageW((HWND)l, CB_GETCURSEL, 0, 0) == 1) ? 1 : 0;
             cfg_save();
             qp_enable(h);
+        } else if (id == ID_CMB_CONTAINER && code == CBN_SELCHANGE) {
+            int sel = (int)SendMessageW((HWND)l, CB_GETCURSEL, 0, 0);
+            if (sel >= 0 && sel <= 1) {
+                g_cfg.container = sel;
+                cfg_save();
+            }
         } else if ((id == ID_EDT_QPI || id == ID_EDT_QPP || id == ID_EDT_QPB) && code == EN_CHANGE) {
             BOOL okv; int v = (int)GetDlgItemInt(h, id, &okv, FALSE);
             if (okv) {

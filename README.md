@@ -41,7 +41,7 @@ The settings window automatically follows your Windows `AppsUseLightTheme` prefe
 - **Per-Monitor V2 DPI Awareness**: Scales crisply across mixed-DPI multi-monitor setups (`app.manifest` + `WM_DPICHANGED`).
 
 ### Video Recording & Encoding
-- **H.264 (AVC) & H.265 (HEVC)** output to **`.mp4`** via Windows Media Foundation (`IMFSinkWriter`).
+- **H.264 (AVC) & H.265 (HEVC)** recording to **`.mp4`** by default, with optional **MPEG-TS (`.ts`)** output via Windows Media Foundation (`IMFSinkWriter`).
 - **GPU-Accelerated Pipeline**: Captures frames directly via **DXGI Desktop Duplication** and converts BGRA → NV12 on the GPU using **D3D11 `VideoProcessor`**, feeding hardware encoders with minimal CPU overhead (automatically falls back to GDI if unavailable).
 - **Rate Control Modes**:
   - **Target Bitrate**: `2`, `4`, `8`, `16`, or `32 Mb/s`

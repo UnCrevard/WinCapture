@@ -14,7 +14,7 @@ CFG g_cfg = {
     0, 8000, 30, 1, 160, 0, 90, 1, 0, 1,
     0x0653, 0x0652, RGB(45, 45, 48), RGB(45, 45, 48),
     0, -1, 1, 0, 18, 20, 22, 0x0646, 0,
-    0, 0, 1, 0, 0, 0x0650
+    0, 0, 1, 0, 0, 0x0650, 0
 };
 
 SIZEP g_sizes[MAXS];
@@ -79,6 +79,7 @@ static const struct { const WCHAR *k; int *v; } g_keys[] = {
     { L"hk_full", &g_cfg.hkFull }, { L"sound_rec", &g_cfg.soundRec },
     { L"mic", &g_cfg.mic }, { L"clipboard", &g_cfg.clip }, { L"exclude_ui", &g_cfg.excl },
     { L"delay", &g_cfg.delay }, { L"clicks", &g_cfg.clicks }, { L"hk_pause", &g_cfg.hkPause },
+    { L"container", &g_cfg.container },
 };
 
 void cfg_load(void)

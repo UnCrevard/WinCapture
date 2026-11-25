@@ -96,9 +96,9 @@
     <rect x="184" y="4" width="30" height="22" rx="2" fill="#444449"/>
     <rect x="192" y="10" width="14" height="10" fill="none" stroke="#f4f4f5" stroke-width="1.6"/>
 
-    <!-- Button 7: Minimize to Tray -->
+    <!-- Button 7: Minimize toolbar -->
     <rect x="218" y="4" width="30" height="22" rx="2" fill="#444449"/>
-    <path d="M227,16 V19 H239 V16 M233,10 V16 M230,13.5 L233,16.5 L236,13.5" fill="none" stroke="#f4f4f5" stroke-width="1.5"/>
+    <path d="M227,17 H239" fill="none" stroke="#f4f4f5" stroke-width="1.8"/>
 
     <!-- Status Readout -->
     <text x="260" y="19.5" fill="#f0f0f0" font-size="12.5" font-weight="500">960 × 540  @ 160, 108</text>

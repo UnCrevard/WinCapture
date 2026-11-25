@@ -84,6 +84,7 @@ enum {
     ID_COL_FRAME = 180, ID_COL_TITLE, ID_EDT_NAME = 185,
     ID_TRK_TRANSP = 190, ID_TXT_TRANSP, ID_CMB_LANG = 195, ID_CMB_DELAY = 196,
     ID_CMB_RC = 320, ID_EDT_QPI, ID_EDT_QPP, ID_EDT_QPB, ID_UD_QPI, ID_UD_QPP, ID_UD_QPB, ID_CMB_RSND,
+    ID_CMB_CONTAINER,
     ID_SZ_LIST = 300, ID_SZ_NAME, ID_SZ_W, ID_SZ_H, ID_SZ_CUR, ID_SZ_ADD, ID_SZ_SET,
     ID_SZ_DEL, ID_SZ_UP, ID_SZ_DOWN, ID_SZ_APPLY, ID_SZ_RESET,
     ID_SZ_X, ID_SZ_Y, ID_SZ_USEPOS,
@@ -117,6 +118,7 @@ typedef struct {
     int delay;    /* retardateur image en secondes : 0 / 3 / 5 / 10 */
     int clicks;   /* 1 = halo visuel sur les clics souris en vidéo */
     int hkPause;  /* raccourci global « pause / reprendre » */
+    int container; /* 0 = MP4, 1 = MPEG-TS */
 } CFG;
 
 #define MAXS 24
@@ -167,7 +169,7 @@ typedef struct {
     X(S_TOO_SMALL, L"The capture area is too small.", L"La zone de capture est trop petite.", L"El área de captura es demasiado pequeña.", L"Der Aufnahmebereich ist zu klein.") \
     X(S_AUDIO_T, L"Audio unavailable", L"Audio indisponible", L"Audio no disponible", L"Audio nicht verfügbar") \
     X(S_AUDIO_M, L"Video-only recording.", L"Enregistrement vidéo seul.", L"Grabación solo de vídeo.", L"Nur Videoaufzeichnung.") \
-    X(S_ENC_FAIL, L"Unable to start encoding.\nCodec unavailable (HEVC?) or audio initialization failed.", L"Impossible de démarrer l’encodage.\nCodec indisponible (HEVC ?) ou échec d’initialisation audio.", L"No se puede iniciar la codificación.\nCódec no disponible (¿HEVC?) o error de audio.", L"Die Kodierung kann nicht gestartet werden.\nCodec nicht verfügbar (HEVC?) oder Audiofehler.") \
+    X(S_ENC_FAIL, L"Unable to start encoding.\nSelected container/codec unavailable or audio initialization failed.", L"Impossible de démarrer l’encodage.\nConteneur/codec sélectionné indisponible ou échec d’initialisation audio.", L"No se puede iniciar la codificación.\nContenedor/códec no disponible o error de audio.", L"Die Kodierung kann nicht gestartet werden.\nAusgewählter Container/Codec nicht verfügbar oder Audiofehler.") \
     X(S_PICK_HINT, L"Click or drag · Wheel: level · Esc: cancel", L"Clic ou glisser · Molette : niveau · Échap : annuler", L"Clic o arrastrar · Rueda: nivel · Esc: cancelar", L"Klicken oder ziehen · Mausrad: Ebene · Esc: abbrechen") \
     X(S_PICK_STATUS, L"%d × %d · wheel: level · drag: free area", L"%d × %d · molette : niveau · glisser : zone libre", L"%d × %d · rueda: nivel · arrastrar: área libre", L"%d × %d · Mausrad: Ebene · Ziehen: freier Bereich") \
     X(S_PICK_T, L"Targeting", L"Ciblage", L"Selección", L"Zielauswahl") \
@@ -219,6 +221,7 @@ typedef struct {
     X(S_TIP_CFG, L"Settings (encoding, sound, folders…)", L"Réglages (encodage, son, dossiers…)", L"Ajustes (codificación, sonido, carpetas…)", L"Einstellungen (Kodierung, Ton, Ordner…)") \
     X(S_TIP_HIDE, L"Hide (stays in the notification area)", L"Masquer (reste dans la zone de notification)", L"Ocultar (permanece en el área de notificación)", L"Ausblenden (bleibt im Infobereich)") \
     X(S_ROW_VCODEC, L"Video codec", L"Codec vidéo", L"Códec de vídeo", L"Videocodec") \
+    X(S_ROW_CONTAINER, L"Recording format", L"Format d’enregistrement", L"Formato de grabación", L"Aufnahmeformat") \
     X(S_ROW_VBR, L"Video bitrate", L"Débit vidéo", L"Tasa de bits de vídeo", L"Video-Bitrate") \
     X(S_ROW_FPS, L"Frames per second", L"Images / seconde", L"Fotogramas por segundo", L"Bilder pro Sekunde") \
     X(S_ROW_ABR, L"Audio bitrate (AAC)", L"Débit audio (AAC)", L"Tasa de bits de audio (AAC)", L"Audio-Bitrate (AAC)") \
