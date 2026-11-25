@@ -243,9 +243,9 @@ static BOOL CALLBACK dark_child(HWND c, LPARAM l)
     }
     if (!_wcsicmp(cls, L"Button")) {
         LONG_PTR st = GetWindowLongPtrW(c, GWL_STYLE) & BS_TYPEMASK;
-        if (st == BS_AUTOCHECKBOX || st == BS_CHECKBOX || st == BS_3STATE || st == BS_AUTO3STATE ||
+        if (st == BS_GROUPBOX || st == BS_AUTOCHECKBOX || st == BS_CHECKBOX || st == BS_3STATE || st == BS_AUTO3STATE ||
             st == BS_RADIOBUTTON || st == BS_AUTORADIOBUTTON) {
-            set_theme(c, L"", L"");         /* permet à WM_CTLCOLORSTATIC de peindre le texte clair */
+            set_theme(c, L"", L"");         /* laisse le parent dessiner les libellés en thème sombre */
         } else {
             set_theme(c, L"DarkMode_Explorer", NULL);
         }
