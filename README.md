@@ -81,6 +81,7 @@ The settings window automatically follows your Windows `AppsUseLightTheme` prefe
 ### Prerequisites
 - **Windows 10 / 11** (64-bit or 32-bit)
 - **MinGW-w64** toolchain (`gcc`, `windres`) and GNU `make` (via MSYS2, WinLibs, w64devkit, etc.)
+- **Linux build host (optional):** MinGW-w64 cross-compiler (`x86_64-w64-mingw32-gcc`, `x86_64-w64-mingw32-windres`); Wine is needed only for `make run`.
 - No external third-party libraries are required — WinCapture links solely against standard Windows system libraries (`mfplat`, `mfreadwrite`, `mfuuid`, `windowscodecs`, `d3d11`, `dxgi`, `dwmapi`, `uiautomation`, `comctl32`, etc.).
 
 ### Compile & Run
@@ -88,6 +89,7 @@ The settings window automatically follows your Windows `AppsUseLightTheme` prefe
 make
 ```
 This compiles all object and resource files into `obj/` and produces `WinCapture.exe` at the project root.
+On Linux, `make` uses the MinGW-w64 cross-compiler by default to produce a Windows executable; it does not build a native Linux application.
 
 Available `Makefile` targets:
 - `make` / `make all` — Build `WinCapture.exe`

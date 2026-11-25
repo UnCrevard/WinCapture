@@ -25,10 +25,10 @@
 #include <shlwapi.h>
 #include <mmsystem.h>
 #include <mmdeviceapi.h>
-#include <audioclient.h>
 #include <mfapi.h>
 #include <mfidl.h>
 #include <mfreadwrite.h>
+#include <audioclient.h>
 #include <wincodec.h>
 #include <d3d11.h>
 #include <dxgi1_2.h>
