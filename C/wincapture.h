@@ -419,6 +419,8 @@ void tray_add(void);
 void tray_set(HICON ic, const WCHAR *tip);
 void balloon(const WCHAR *title, const WCHAR *msg);
 void tray_menu(void);
+void cfg_scale_update(void);
+int cfg_scale(int value);
 void cfg_toggle(void);
 void sizes_editor(BOOL addCurrent);
 void apply_wh(int w, int h);

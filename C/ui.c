@@ -913,8 +913,9 @@ void create_aux_windows(void)
     DWORD sst = WS_POPUP | WS_CAPTION | WS_SYSMENU, sex = WS_EX_TOOLWINDOW | WS_EX_TOPMOST;
     g_dark = sys_dark();
     allow_dark_app(g_dark);
+    cfg_scale_update();
     g_cfgwnd = CreateWindowExW(WS_EX_TOOLWINDOW | WS_EX_TOPMOST, L"WinCapCfg", T(S_SETTINGS_T),
-                               WS_POPUP | WS_BORDER, 0, 0, 880, 514, g_main, NULL, g_inst, NULL);
+                               WS_POPUP | WS_BORDER, 0, 0, cfg_scale(880), cfg_scale(514), g_main, NULL, g_inst, NULL);
     AdjustWindowRectEx(&sr, sst, FALSE, sex);
     g_szwnd = CreateWindowExW(sex, L"WinCapSizes", T(S_SZ_TITLE), sst, 0, 0,
                               sr.right - sr.left, sr.bottom - sr.top, g_main, NULL, g_inst, NULL);
@@ -1626,6 +1627,10 @@ LRESULT CALLBACK CfgProc(HWND h, UINT m, WPARAM w, LPARAM l)
         DrawTextW(d->hDC, T(S_CHOOSE), -1, &d->rcItem, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
         return TRUE;
     }
+    case WM_DPICHANGED:
+        dpi_refresh(h, HIWORD(w), (const RECT *)l);
+        PostMessageW(g_main, WM_RELANG, 0, 0);
+        return 0;
     case WM_ACTIVATE:
         if (LOWORD(w) == WA_INACTIVE) {
             if (!g_cfgModal) { ShowWindow(h, SW_HIDE); g_cfgHid = GetTickCount(); hotkeys_register(); }

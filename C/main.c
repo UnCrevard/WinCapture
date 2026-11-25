@@ -487,8 +487,40 @@ UINT64 sound_len100(int mode, const WCHAR *path)
     return (ms + 100) * 10000ULL;
 }
 
+static int g_cfgScale = 100;
+
+void cfg_scale_update(void)
+{
+    HDC dc = GetDC(NULL);
+    HGDIOBJ old = NULL;
+    TEXTMETRICW tm;
+    int dpiScale = MulDiv(g_dpi, 100, 96);
+    int fontScale = 100;
+    if (dc) {
+        if (g_font) old = SelectObject(dc, g_font);
+        if (GetTextMetricsW(dc, &tm)) fontScale = MulDiv(tm.tmHeight, 100, S(16));
+        if (old) SelectObject(dc, old);
+        ReleaseDC(NULL, dc);
+    }
+    g_cfgScale = fontScale > dpiScale ? fontScale : dpiScale;
+    if (g_cfgScale < 100) g_cfgScale = 100;
+}
+
+int cfg_scale(int value)
+{
+    return MulDiv(value, g_cfgScale, 100);
+}
+
 HWND mk(HWND p, const WCHAR *cls, const WCHAR *txt, DWORD st, int x, int y, int w, int h, int id)
 {
+    WCHAR parentClass[32];
+    if (GetClassNameW(p, parentClass, ARRAYSIZE(parentClass)) &&
+        !_wcsicmp(parentClass, L"WinCapCfg")) {
+        x = cfg_scale(x);
+        y = cfg_scale(y);
+        w = cfg_scale(w);
+        h = cfg_scale(h);
+    }
     HWND c = CreateWindowExW(0, cls, txt, WS_CHILD | WS_VISIBLE | st, x, y, w, h,
                              p, (HMENU)(INT_PTR)id, g_inst, NULL);
     SendMessageW(c, WM_SETFONT, (WPARAM)g_font, TRUE);
