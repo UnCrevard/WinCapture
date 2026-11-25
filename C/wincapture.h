@@ -263,7 +263,7 @@ typedef struct {
     X(S_QP_UNSUP_M, L"The encoder does not accept QP settings: target bitrate used.", L"L’encodeur n’accepte pas ces réglages QP : débit cible utilisé.", L"El codificador no admite ajustes QP: se usa la tasa de bits objetivo.", L"Der Encoder akzeptiert keine QP-Einstellungen: Ziel-Bitrate wird verwendet.") \
     X(S_HK_LBL_FULL, L"Full screen shortcut", L"Raccourci plein écran", L"Atajo de pantalla completa", L"Kürzel Vollbild") \
     X(S_HK_FULL, L"The “full screen” shortcut is already used by another application.", L"Le raccourci « plein écran » est déjà utilisé par une autre application.", L"El atajo de «pantalla completa» ya está en uso por otra aplicación.", L"Das Tastenkürzel „Vollbild“ wird bereits von einer anderen Anwendung verwendet.") \
-    X(S_MENU_FULL_ON, L"Full screen (hides the interface)\t%s", L"Plein écran (masque l’interface)\t%s", L"Pantalla completa (oculta la interfaz)\t%s", L"Vollbild (blendet die Oberfläche aus)\t%s") \
+    X(S_MENU_FULL_ON, L"Full screen\t%s", L"Plein écran\t%s", L"Pantalla completa\t%s", L"Vollbild\t%s") \
     X(S_MENU_FULL_OFF, L"Exit full screen\t%s", L"Quitter le plein écran\t%s", L"Salir de pantalla completa\t%s", L"Vollbild beenden\t%s") \
     X(S_TIP_FRAME, L"Show / hide the frame (or double-click the bar)", L"Afficher / masquer le cadre (ou double-clic sur la barre)", L"Mostrar / ocultar el marco (o doble clic en la barra)", L"Rahmen ein-/ausblenden (oder Doppelklick auf die Leiste)") \
     X(S_TIP_PAUSE, L"Pause recording", L"Mettre l’enregistrement en pause", L"Pausar la grabación", L"Aufnahme pausieren") \
