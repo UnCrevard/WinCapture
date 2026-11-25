@@ -1,7 +1,8 @@
 .vscode
 /backup
 /obj
+/testing
 *.ini
-*.exe
 *.png
 *.mp4
+
