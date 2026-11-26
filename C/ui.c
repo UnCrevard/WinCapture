@@ -491,7 +491,7 @@ static BOOL bar_shows(int id)
 static int bar_w(BOOL expanded, BOOL rec)
 {
     int n = 2 + (rec ? 1 : 0) + (expanded ? 5 : 0);
-    int w = 2 * S(10) + n * S(28) + (n - 1) * S(3);
+    int w = 2 * S(10) + S(8) + n * S(28) + (n - 1) * S(3);
     if (expanded) w += S(8) + S(8) + S(200);
     return w;
 }
@@ -513,7 +513,7 @@ void layout_bar(HWND h)
     }
     if (g_barExpanded) {
         g_textRc.left = x + S(6);
-        g_textRc.right = W - S(10);
+        g_textRc.right = W - S(14);
         g_textRc.top = 0;
         g_textRc.bottom = BAR_H;
     } else {
@@ -605,13 +605,18 @@ void apply_opacity(void)
 
 void apply_exclude_capture(void)
 {
-    DWORD aff = g_cfg.excl ? WDA_EXCLUDEFROMCAPTURE : WDA_NONE;
+    DWORD aff = WDA_EXCLUDEFROMCAPTURE;
     if (g_main)   SetWindowDisplayAffinity(g_main, aff);
     if (g_frame)  SetWindowDisplayAffinity(g_frame, aff);
     if (g_cfgwnd) SetWindowDisplayAffinity(g_cfgwnd, aff);
-    if (g_szwnd)  SetWindowDisplayAffinity(g_szwnd, aff);
     if (g_hl)     SetWindowDisplayAffinity(g_hl, aff);
     if (g_mag)    SetWindowDisplayAffinity(g_mag, WDA_EXCLUDEFROMCAPTURE);
+    if (g_szwnd) {
+        SetWindowDisplayAffinity(g_szwnd, aff);
+        RedrawWindow(g_szwnd, NULL, NULL,
+                     RDW_INVALIDATE | RDW_ERASE | RDW_FRAME | RDW_ALLCHILDREN);
+    }
+    DwmFlush();
 }
 
 static BOOL CALLBACK set_child_font(HWND c, LPARAM l)
@@ -848,6 +853,10 @@ LRESULT CALLBACK SzProc(HWND h, UINT m, WPARAM w, LPARAM l)
     case WM_CLOSE:
         ShowWindow(h, SW_HIDE);
         return 0;
+    case WM_NCHITTEST: {
+        LRESULT hit = DefWindowProcW(h, m, w, l);
+        return hit == HTCLIENT ? HTCAPTION : hit;
+    }
     }
     return DefWindowProcW(h, m, w, l);
 }
@@ -927,6 +936,7 @@ void cfg_toggle(void)
     RECT w, wa; POINT c; int ww, hh, x, y;
     if (IsWindowVisible(g_cfgwnd)) { ShowWindow(g_cfgwnd, SW_HIDE); return; }
     if (GetTickCount() - g_cfgHid < 300) return;
+    if (g_szwnd) ShowWindow(g_szwnd, SW_HIDE);
     sync_theme();
     GetWindowRect(g_cfgwnd, &w);
     ww = w.right - w.left; hh = w.bottom - w.top;
@@ -1089,12 +1099,29 @@ LRESULT CALLBACK MainProc(HWND h, UINT m, WPARAM w, LPARAM l)
     }
     case WM_PAINT: {
         PAINTSTRUCT ps; HDC dc = BeginPaint(h, &ps);
+        RECT c; HBRUSH grip;
+        GetClientRect(h, &c);
         if (g_textRc.right - g_textRc.left > S(20)) {
             RECT tr = g_textRc;
             SelectObject(dc, g_font);
             SetBkMode(dc, TRANSPARENT);
             SetTextColor(dc, text_for(title_color()));
             DrawTextW(dc, g_status, -1, &tr, DT_LEFT | DT_VCENTER | DT_SINGLELINE | DT_END_ELLIPSIS);
+        }
+        grip = CreateSolidBrush(text_for(title_color()));
+        if (grip) {
+            int d = S(2), gap = S(2), cy = BAR_H / 2;
+            for (int col = 0; col < 2; col++) {
+                int lx = S(3) + col * (d + gap);
+                int rx = c.right - S(3) - d - col * (d + gap);
+                for (int row = -1; row <= 1; row++) {
+                    RECT dot = { lx, cy + row * S(4), lx + d, cy + row * S(4) + d };
+                    FillRect(dc, &dot, grip);
+                    dot.left = rx; dot.right = rx + d;
+                    FillRect(dc, &dot, grip);
+                }
+            }
+            DeleteObject(grip);
         }
         EndPaint(h, &ps);
         return 0;
@@ -1482,14 +1509,12 @@ LRESULT CALLBACK CfgProc(HWND h, UINT m, WPARAM w, LPARAM l)
             for (int k = 0; k < 4; k++) SendMessageW(cl, CB_ADDSTRING, 0, (LPARAM)lnames[k]);
             SendMessageW(cl, CB_SETCURSEL, (g_cfg.lang >= 0 && g_cfg.lang < 4) ? g_cfg.lang : 0, 0);
         }
-        mk(h, L"BUTTON", T(S_CHK_EXCL), BS_AUTOCHECKBOX | WS_TABSTOP, 306, 400, 268, 22, ID_CHK_EXCL);
-        CheckDlgButton(h, ID_CHK_EXCL, g_cfg.excl ? BST_CHECKED : BST_UNCHECKED);
-        mk(h, L"STATIC", T(S_HK_LBL_VID), SS_LEFT, 306, 428, 130, 20, 0);
-        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 444, 424, 130, 22, ID_HK_REC);
-        mk(h, L"STATIC", T(S_HK_LBL_PAUSE), SS_LEFT, 306, 456, 130, 20, 0);
-        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 444, 452, 130, 22, ID_HK_PAUSE);
-        mk(h, L"STATIC", T(S_HK_LBL_FULL), SS_LEFT, 306, 484, 130, 20, 0);
-        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 444, 480, 130, 22, ID_HK_FULL);
+        mk(h, L"STATIC", T(S_HK_LBL_VID), SS_LEFT, 306, 400, 130, 20, 0);
+        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 444, 396, 130, 22, ID_HK_REC);
+        mk(h, L"STATIC", T(S_HK_LBL_PAUSE), SS_LEFT, 306, 428, 130, 20, 0);
+        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 444, 424, 130, 22, ID_HK_PAUSE);
+        mk(h, L"STATIC", T(S_HK_LBL_FULL), SS_LEFT, 306, 456, 130, 20, 0);
+        mk(h, HOTKEY_CLASSW, L"", WS_TABSTOP | WS_BORDER, 444, 452, 130, 22, ID_HK_FULL);
         {
             static const int hkIds[3] = { ID_HK_REC, ID_HK_PAUSE, ID_HK_FULL };
             const int hkVals[3] = { g_cfg.hkRec, g_cfg.hkPause, g_cfg.hkFull };
@@ -1526,7 +1551,7 @@ LRESULT CALLBACK CfgProc(HWND h, UINT m, WPARAM w, LPARAM l)
             cfg_save();
             if (r->tgt == &g_cfg.sound) play_shutter();
         } else if (id == ID_CHK_AUDIO || id == ID_CHK_CURSOR || id == ID_CHK_VFR || id == ID_CHK_GPU ||
-                   id == ID_CHK_MIC || id == ID_CHK_CLIP || id == ID_CHK_EXCL || id == ID_CHK_CLICKS) {
+                   id == ID_CHK_MIC || id == ID_CHK_CLIP || id == ID_CHK_CLICKS) {
             int on = IsDlgButtonChecked(h, id) == BST_CHECKED;
             if (id == ID_CHK_AUDIO)       g_cfg.audio = on;
             else if (id == ID_CHK_CURSOR) g_cfg.cursor = on;
@@ -1535,7 +1560,6 @@ LRESULT CALLBACK CfgProc(HWND h, UINT m, WPARAM w, LPARAM l)
             else if (id == ID_CHK_MIC)    g_cfg.mic = on;
             else if (id == ID_CHK_CLIP)   g_cfg.clip = on;
             else if (id == ID_CHK_CLICKS) g_cfg.clicks = on;
-            else { g_cfg.excl = on; apply_exclude_capture(); }
             cfg_save();
         } else if (id == ID_BTN_DIR && code == BN_CLICKED) {
             WCHAR cur[MAX_PATH];

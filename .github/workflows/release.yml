@@ -1,0 +1,35 @@
+name: Build and publish release
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Install MinGW-w64
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y make gcc-mingw-w64-x86-64 binutils-mingw-w64-x86-64
+
+      - name: Build Windows executable
+        run: |
+          make
+          test -s WinCapture.exe
+
+      - name: Create versioned release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: v${{ github.run_number }}
+        run: |
+          gh release create "$VERSION" WinCapture.exe \
+            --target "$GITHUB_SHA" \
+            --title "WinCapture $VERSION" \
+            --generate-notes

@@ -14,7 +14,7 @@ CFG g_cfg = {
     0, 8000, 30, 1, 160, 0, 90, 1, 0, 1,
     0x0653, 0x0652, RGB(45, 45, 48), RGB(45, 45, 48),
     0, -1, 1, 0, 18, 20, 22, 0x0646, 0,
-    0, 0, 1, 0, 0, 0x0650, 1
+    0, 0, 0, 0, 0x0650, 1
 };
 
 SIZEP g_sizes[MAXS];
@@ -77,7 +77,7 @@ static const struct { const WCHAR *k; int *v; } g_keys[] = {
     { L"transparence", &g_cfg.transp }, { L"lang", &g_cfg.lang }, { L"gpu", &g_cfg.gpu },
     { L"rc_mode", &g_cfg.rcmode }, { L"qp_i", &g_cfg.qpI }, { L"qp_p", &g_cfg.qpP }, { L"qp_b", &g_cfg.qpB },
     { L"hk_full", &g_cfg.hkFull }, { L"sound_rec", &g_cfg.soundRec },
-    { L"mic", &g_cfg.mic }, { L"clipboard", &g_cfg.clip }, { L"exclude_ui", &g_cfg.excl },
+    { L"mic", &g_cfg.mic }, { L"clipboard", &g_cfg.clip },
     { L"delay", &g_cfg.delay }, { L"clicks", &g_cfg.clicks }, { L"hk_pause", &g_cfg.hkPause },
     { L"container", &g_cfg.container },
 };
@@ -489,8 +489,31 @@ UINT64 sound_len100(int mode, const WCHAR *path)
 
 static int g_cfgScale = 100;
 
+static int cfg_text_scale(HDC dc, int id, int width)
+{
+    const WCHAR *text = T(id);
+    SIZE extent;
+    if (!text[0] || !GetTextExtentPoint32W(dc, text, lstrlenW(text), &extent)) return 100;
+    return MulDiv(extent.cx, 100, width);
+}
+
 void cfg_scale_update(void)
 {
+    static const struct { int id, width; } fit[] = {
+        { S_GROUP_VIDEO, 542 }, { S_GROUP_IMAGE, 254 },
+        { S_GROUP_FILENAME, 254 }, { S_GROUP_GENERAL, 542 },
+        { S_ROW_VCODEC, 126 }, { S_ROW_CONTAINER, 126 }, { S_ROW_VBR, 126 },
+        { S_ROW_FPS, 126 }, { S_ROW_ABR, 126 }, { S_ROW_IMGFMT, 126 },
+        { S_ROW_JPGQ, 126 }, { S_ROW_SOUND, 126 }, { S_ROW_RSOUND, 126 },
+        { S_ROW_DELAY, 126 }, { S_RC_LBL, 126 }, { S_QP_I, 132 },
+        { S_QP_P, 132 }, { S_QP_B, 132 }, { S_COL_FRAME, 126 },
+        { S_COL_BAR, 126 }, { S_LANGUAGE, 126 }, { S_HK_LBL_VID, 126 },
+        { S_HK_LBL_PAUSE, 126 }, { S_HK_LBL_FULL, 126 }, { S_HK_LBL_IMG, 126 },
+        { S_CHK_CLIP, 226 }, { S_CHK_AUDIO, 244 },
+        { S_CHK_MIC, 244 }, { S_CHK_CURSOR, 244 }, { S_CHK_CLICKS, 244 },
+        { S_CHK_VFR, 244 }, { S_CHK_GPU, 244 }, { S_NAME_LBL, 260 },
+        { S_DIR_T, 54 }, { S_CHOOSE, 110 }
+    };
     HDC dc = GetDC(NULL);
     HGDIOBJ old = NULL;
     TEXTMETRICW tm;
@@ -499,11 +522,17 @@ void cfg_scale_update(void)
     if (dc) {
         if (g_font) old = SelectObject(dc, g_font);
         if (GetTextMetricsW(dc, &tm)) fontScale = MulDiv(tm.tmHeight, 100, S(16));
+        g_cfgScale = fontScale > dpiScale ? fontScale : dpiScale;
+        if (g_cfgScale < 100) g_cfgScale = 100;
+        for (int i = 0; i < (int)ARRAYSIZE(fit); i++) {
+            int textScale = cfg_text_scale(dc, fit[i].id, fit[i].width);
+            if (textScale > g_cfgScale) g_cfgScale = textScale;
+        }
         if (old) SelectObject(dc, old);
         ReleaseDC(NULL, dc);
+    } else {
+        g_cfgScale = dpiScale > 100 ? dpiScale : 100;
     }
-    g_cfgScale = fontScale > dpiScale ? fontScale : dpiScale;
-    if (g_cfgScale < 100) g_cfgScale = 100;
 }
 
 int cfg_scale(int value)

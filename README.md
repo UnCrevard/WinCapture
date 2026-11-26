@@ -7,7 +7,7 @@ A lightweight, dependency-free **Win32 screen & audio capture tool** written in 
 ## Screenshots
 
 ### 1. Floating Toolbar & Hollow Capture Frame
-The compact floating bar collapses to Screenshot & Record buttons when idle and expands on hover to show size presets, window targeting, settings, frame toggle, tray minimize, and live region dimensions (`W × H @ X, Y`).
+The compact floating bar collapses to Screenshot & Record buttons when idle and expands on hover to show size presets, window targeting, settings, frame toggle, tray minimize, and live region dimensions (`W × H @ X, Y`). Drag the grip marks at either end to move the bar, whether expanded or collapsed.
 
 ![WinCapture floating toolbar and capture frame](docs/screenshots/floating-bar-capture.svg)
 
@@ -37,7 +37,7 @@ The settings window automatically follows your Windows `AppsUseLightTheme` prefe
   - `Ctrl + Arrow keys`: Resize frame by `1 px` (`Ctrl + Shift + Arrow`: `10 px`)
 - **UI Automation Targeter + 4× Magnifier**: Target full windows, child controls, or UI Automation elements; scroll the wheel to change hierarchy depth, or drag to define a free-form rectangle.
 - **Frameless & Full-Screen Modes**: Double-click the toolbar (or click the frame icon) to hide the border while keeping its region, or switch to Full Screen to capture the entire monitor containing the region.
-- **Exclude Interface from Captures**: Enabled by default via `SetWindowDisplayAffinity` (`WDA_EXCLUDEFROMCAPTURE`) so WinCapture's own overlay never appears in your screenshots or videos.
+- **Exclude Interface from Captures**: Always enabled via `SetWindowDisplayAffinity` (`WDA_EXCLUDEFROMCAPTURE`) so WinCapture's own overlay never appears in your screenshots or videos.
 - **Per-Monitor V2 DPI Awareness**: Scales crisply across mixed-DPI multi-monitor setups (`app.manifest` + `WM_DPICHANGED`).
 
 ### Video Recording & Encoding

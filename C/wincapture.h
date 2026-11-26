@@ -78,7 +78,7 @@ enum {
     IDM_SIZE_ADD = 490, IDM_SIZE_EDIT,
     IDM_SIZE0 = 500,
     ID_COMBO0 = 100, ID_CHK_AUDIO = 150, ID_CHK_CURSOR = 151, ID_CHK_VFR = 152, ID_CHK_GPU = 153,
-    ID_CHK_MIC = 154, ID_CHK_CLIP = 155, ID_CHK_EXCL = 156, ID_CHK_CLICKS = 157,
+    ID_CHK_MIC = 154, ID_CHK_CLIP = 155, ID_CHK_CLICKS = 157,
     ID_BTN_DIR = 160, ID_TXT_DIR,
     ID_HK_SHOT = 170, ID_HK_REC, ID_HK_FULL, ID_HK_PAUSE,
     ID_COL_FRAME = 180, ID_COL_TITLE, ID_EDT_NAME = 185,
@@ -114,7 +114,6 @@ typedef struct {
     int soundRec; /* son de début / fin d'enregistrement : mêmes choix que `sound` */
     int mic;      /* 1 = enregistrer aussi le microphone */
     int clip;     /* 1 = copier la capture d'image dans le presse-papiers */
-    int excl;     /* 1 = exclure l'interface des captures (WDA_EXCLUDEFROMCAPTURE) */
     int delay;    /* retardateur image en secondes : 0 / 3 / 5 / 10 */
     int clicks;   /* 1 = halo visuel sur les clics souris en vidéo */
     int hkPause;  /* raccourci global « pause / reprendre » */
@@ -277,7 +276,6 @@ typedef struct {
     X(S_TIP_RESUME, L"Resume recording", L"Reprendre l’enregistrement", L"Reanudar la grabación", L"Aufnahme fortsetzen") \
     X(S_CHK_MIC, L"Also record microphone", L"Enregistrer aussi le microphone", L"Grabar también el micrófono", L"Auch Mikrofon aufnehmen") \
     X(S_CHK_CLIP, L"Copy screenshot to clipboard", L"Copier l’image dans le presse-papiers", L"Copiar imagen al portapapeles", L"Bild in Zwischenablage kopieren") \
-    X(S_CHK_EXCL, L"Exclude interface from captures", L"Exclure l’interface des captures", L"Excluir interfaz de las capturas", L"Oberfläche aus Aufnahmen ausblenden") \
     X(S_CHK_CLICKS, L"Highlight mouse clicks in video", L"Mettre en évidence les clics souris", L"Resaltar clics del ratón en vídeo", L"Mausklicks im Video hervorheben") \
     X(S_ROW_DELAY, L"Image timer", L"Retardateur (image)", L"Temporizador (imagen)", L"Selbstauslöser (Bild)") \
     X(S_DLY_0, L"None", L"Aucun", L"Ninguno", L"Keiner") \
