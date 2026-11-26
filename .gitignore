@@ -1,7 +1,12 @@
 .vscode
+
 /backup
 /obj
 /testing
+
 *.ini
+*.bat
 *.png
+*.bmp
 *.mp4
+*.ts
